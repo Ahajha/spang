@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <fstream>
 
-void read(spang::output_parser& parse, const std::filesystem::path path)
+void read(spang::output_parser& parse, const std::filesystem::path& path)
 {
 	if (std::filesystem::is_directory(path))
 	{

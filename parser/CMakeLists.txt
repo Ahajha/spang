@@ -1,3 +1,6 @@
-add_library(input_parser STATIC src/input_parser.cpp include/input_parser.hpp)
+add_library(parser STATIC src/parser.cpp include/parser.hpp)
 
-target_include_directories(input_parser PUBLIC include/)
+include_directories(../graph ../logger)
+
+target_include_directories(parser PUBLIC include/)
+target_link_libraries(parser graph logger)

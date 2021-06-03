@@ -8,7 +8,7 @@
 namespace spang
 {
 
-void log_time(std::ostream& stream)
+inline void log_time(std::ostream& stream)
 {
 	char buf[16];
 	std::time_t t = std::time(nullptr);

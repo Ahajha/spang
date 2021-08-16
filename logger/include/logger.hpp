@@ -17,7 +17,7 @@ inline void log_time(std::ostream& stream)
 }
 
 template<class... Args>
-void log_info(Args... args)
+void log_info(Args&&... args)
 {
 	log_time(std::clog);
 	std::clog << "INFO: ";
@@ -25,10 +25,10 @@ void log_info(Args... args)
 }
 
 template<class... Args>
-void log_error(Args... args)
+void log_error(Args&&... args)
 {
 	log_time(std::cerr);
-	std::clog << "ERROR: ";
+	std::cerr << "ERROR: ";
 	(std::cerr << ... << std::forward<Args>(args)) << '\n';
 	exit(1);
 }
@@ -59,7 +59,7 @@ class timer
 		const auto m = (total_ms / (1000 * 60)) % 60;
 		const auto h = total_ms / (1000 * 60 * 60);
 		
-		// No need to print hours if the run took less than 1 hour, likewise for other units.
+		// No need to print hours if the run took less than 1 hour, likewise for minutes.
 		if (h > 0)
 			log_info(msg, h, "h ", m, "m ", s, 's');
 		else if (m > 0)

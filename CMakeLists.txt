@@ -9,6 +9,4 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(graph)
 add_subdirectory(logger)
 add_subdirectory(parser)
-
-add_executable(validate main/validate.cpp)
-target_link_libraries(validate PUBLIC parser logger)
+add_subdirectory(main)

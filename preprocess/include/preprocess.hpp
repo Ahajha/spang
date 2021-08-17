@@ -76,12 +76,12 @@ namespace spang
 	/*!
 	Compacts all given graphs into a compact graph format.
 	*/
-	std::vector<compact_graph_t> compact_graphs(const std::vector<graph_t>& graphs);
+	std::vector<compact_graph_t> compact_graphs(const std::vector<parsed_input_graph_t>& graphs);
 	
 	/*!
 	Convenience function to perform all preprocessing steps. Finds and prunes infrequent edges,
 	then converts to a compact graph representation.
 	*/
-	std::vector<compact_graph_t> preprocess(const std::vector<graph_t>& graphs,
+	std::vector<compact_graph_t> preprocess(const std::vector<parsed_input_graph_t>& graphs,
 	  std::size_t min_freq);
 }

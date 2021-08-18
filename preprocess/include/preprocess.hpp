@@ -11,7 +11,7 @@
 namespace spang
 {
 	/*!
-	Searches graphs for each vertex and edge label that occurs at least min_freq times.
+	Searches graphs for each vertex and edge label that occurs in at least min_freq graphs.
 	For each frequent label, includes a list of graphs that the label occurs in.
 	*/
 	std::pair<std::map<vertex_label_t, std::vector<graph_id_t>>,
@@ -26,7 +26,7 @@ namespace spang
 	using occurrence_count = std::size_t;
 	
 	/*!
-	Searches graphs for each vertex and edge label that occurs at least min_freq times.
+	Searches graphs for each vertex and edge label that occurs in at least min_freq graphs.
 	For each frequent label, includes the number of graphs the label occurs in.
 	*/
 	std::pair<std::map<vertex_label_t, occurrence_count>,

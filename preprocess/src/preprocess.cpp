@@ -10,13 +10,13 @@ namespace spang
 		std::size_t min_freq;
 		
 		template<class label_t>
-		bool operator()(const std::pair<label_t, std::vector<graph_id_t>>& kv_pair) const
+		bool operator()(const std::pair<const label_t, std::vector<graph_id_t>>& kv_pair) const
 		{
 			return kv_pair.second.size() < min_freq;
 		}
 		
 		template<class label_t>
-		bool operator()(const std::pair<label_t, occurrence_count>& kv_pair) const
+		bool operator()(const std::pair<const label_t, occurrence_count>& kv_pair) const
 		{
 			return kv_pair.second < min_freq;
 		}

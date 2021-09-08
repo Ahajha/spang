@@ -1,5 +1,6 @@
 #include "preprocess.hpp"
 #include <set>
+#include <algorithm>
 
 namespace spang
 {
@@ -110,5 +111,20 @@ namespace spang
 		std::erase_if(freq_edge_labels, prune_infrequent{min_freq});
 		
 		return { freq_vertex_labels, freq_edge_labels };
+	}
+	
+	compact_graph_t::compact_graph_t(const graph_t& source) : id(source.id),
+		n_edges(source.n_edges), edges(std::make_unique<edge_t[]>(2 * source.n_edges))
+	{
+		for (auto iter = edges.get(); const auto& src_vert : source.vertices)
+		{
+			// Construct the vertex
+			vertices.emplace_back(src_vert.label, src_vert.id,
+				std::span{iter, src_vert.edges.size()});
+			
+			// Copy the edges from the source graph into this one, and have the iterator
+			// point to the next edge after to prepare for the next iteration.
+			iter = std::ranges::copy(src_vert.edges, iter).out;
+		}
 	}
 }

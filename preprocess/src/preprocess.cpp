@@ -1,4 +1,5 @@
 #include "preprocess.hpp"
+#include <set>
 
 namespace spang
 {

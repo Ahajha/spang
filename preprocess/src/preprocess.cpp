@@ -129,4 +129,57 @@ compact_graph_t::compact_graph_t(const graph_t& source) : id(source.id),
 	}
 }
 
+template<class value_t>
+std::vector<compact_graph_t> prune_infrequent_labels(
+	const std::vector<parsed_input_graph_t>& graphs,
+	std::map<vertex_label_t, value_t> freq_vertex_labels,
+	std::map<edge_label_t, value_t> freq_edge_labels)
+{
+	std::vector<compact_graph_t> result;
+	
+	for (const auto& input_graph : graphs)
+	{
+		// Convert from edge-list format to adjacency list format, and prune infrequent
+		// labels while doing so.
+		graph_t graph;
+		
+		// Maps old vertex IDs to new IDs, to account for indexes being offset
+		std::unordered_map<vertex_id_t, vertex_id_t> label_map;
+		
+		for (const auto& vert : input_graph.vertices)
+		{
+			if (freq_vertex_labels.contains(vert.label))
+			{
+				label_map[vert.id] = static_cast<vertex_id_t>(graph.vertices.size());
+				graph.vertices.emplace_back(vert.label, vert.id);
+			}
+			// Otherwise, vertex is not frequent, ignore whole vertex
+		}
+		
+		edge_id_t edge_id = 0;
+		for (const auto& edge : input_graph.edges)
+		{
+			const auto& vert_to   = input_graph.vertices[edge.to];
+			const auto& vert_from = input_graph.vertices[edge.from];
+			if (freq_edge_labels.contains(edge.label)
+			 && freq_vertex_labels.contains(vert_to.label)
+			 && freq_vertex_labels.contains(vert_from.label))
+			{
+				const auto to_id = label_map[vert_to.id];
+				const auto from_id = label_map[vert_from.id];
+				graph.vertices[to_id].edges.emplace_back(to_id, from_id, edge.label, edge_id);
+				graph.vertices[from_id].edges.emplace_back(from_id, to_id, edge.label, edge_id);
+				++edge_id;
+			}
+		}
+		graph.n_edges = static_cast<decltype(graph_t::n_edges)>(edge_id);
+		
+		// If the graph does not have any edges, then prune the whole thing.
+		if (graph.n_edges != 0)
+			result.emplace_back(graph);
+	}
+	
+	return result;
+}
+
 }

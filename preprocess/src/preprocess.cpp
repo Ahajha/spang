@@ -137,12 +137,14 @@ std::vector<compact_graph_t> prune_infrequent_labels(
 	std::map<edge_label_t, value_t> freq_edge_labels)
 {
 	std::vector<compact_graph_t> result;
+	result.reserve(graphs.size());
 	
 	for (const auto& input_graph : graphs)
 	{
 		// Convert from edge-list format to adjacency list format, and prune infrequent
 		// labels while doing so.
 		graph_t graph;
+		graph.vertices.reserve(input_graph.vertices.size());
 		
 		// Maps old vertex IDs to new IDs, to account for indexes being offset
 		std::unordered_map<vertex_id_t, vertex_id_t> label_map;
@@ -176,6 +178,7 @@ std::vector<compact_graph_t> prune_infrequent_labels(
 			result.emplace_back(graph);
 	}
 	
+	result.shrink_to_fit();
 	return result;
 }
 

@@ -32,32 +32,21 @@ struct parsed_input_graph_t
 	std::vector<parsed_edge_t> edges;
 };
 
-struct parsed_output_graph_t
+//! This class is not intended to be used directly, but exists so that the comparison
+//! operators can be defaulted while ignoring the graph ID.
+struct parsed_output_graph_base_t
 {
-	graph_id_t id;
 	std::vector<parsed_vertex_t> vertices;
 	std::vector<parsed_edge_t> edges;
 	std::vector<graph_id_t> support;
 	
-	// These cannot be defaulted, as we need to ignore the id.
-	auto operator<=>(const parsed_output_graph_t& other) const
-	{
-		const auto comp1 = vertices <=> other.vertices;
-		if (comp1 != 0) return comp1;
-		
-		const auto comp2 = edges <=> other.edges;
-		if (comp2 != 0) return comp2;
-		
-		const auto comp3 = support <=> other.support;
-		return comp3;
-	}
-	
-	bool operator==(const parsed_output_graph_t& other) const
-	{
-		return vertices == other.vertices
-		    && edges == other.edges
-		    && support == other.support;
-	}
+	bool operator==(const parsed_output_graph_base_t&) const = default;
+	auto operator<=>(const parsed_output_graph_base_t&) const = default;
+};
+
+struct parsed_output_graph_t : parsed_output_graph_base_t
+{
+	graph_id_t id;
 };
 
 /*!

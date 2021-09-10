@@ -156,7 +156,6 @@ std::vector<compact_graph_t> prune_infrequent_labels(
 			// Otherwise, vertex is not frequent, ignore whole vertex
 		}
 		
-		edge_id_t edge_id = 0;
 		for (const auto& edge : input_graph.edges)
 		{
 			const auto& vert_to   = input_graph.vertices[edge.to];
@@ -167,12 +166,9 @@ std::vector<compact_graph_t> prune_infrequent_labels(
 			{
 				const auto to_id = label_map[vert_to.id];
 				const auto from_id = label_map[vert_from.id];
-				graph.vertices[to_id].edges.emplace_back(to_id, from_id, edge.label, edge_id);
-				graph.vertices[from_id].edges.emplace_back(from_id, to_id, edge.label, edge_id);
-				++edge_id;
+				graph.add_edge(from_id, edge.label, to_id);
 			}
 		}
-		graph.n_edges = static_cast<decltype(graph_t::n_edges)>(edge_id);
 		
 		// If the graph does not have any edges, then prune the whole thing.
 		if (graph.n_edges != 0)

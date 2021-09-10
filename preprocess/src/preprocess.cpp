@@ -117,6 +117,7 @@ std::pair<std::map<vertex_label_t, occurrence_count>,
 compact_graph_t::compact_graph_t(const graph_t& source) : id(source.id),
 	n_edges(source.n_edges), edges(std::make_unique<edge_t[]>(2 * source.n_edges))
 {
+	vertices.reserve(source.vertices.size());
 	for (auto iter = edges.get(); const auto& src_vert : source.vertices)
 	{
 		// Construct the vertex

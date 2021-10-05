@@ -133,8 +133,8 @@ compact_graph_t::compact_graph_t(const graph_t& source) : id(source.id),
 template<class value_t>
 std::vector<compact_graph_t> prune_infrequent_labels(
 	const std::vector<parsed_input_graph_t>& graphs,
-	std::map<vertex_label_t, value_t> freq_vertex_labels,
-	std::map<edge_label_t, value_t> freq_edge_labels)
+	const std::map<vertex_label_t, value_t> freq_vertex_labels,
+	const std::map<edge_label_t, value_t> freq_edge_labels)
 {
 	std::vector<compact_graph_t> result;
 	result.reserve(graphs.size());

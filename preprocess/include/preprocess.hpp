@@ -70,7 +70,7 @@ A std::set would be used, but this is intended to be used with the functions abo
 template<class value_t>
 std::vector<compact_graph_t> prune_infrequent_labels(
 	const std::vector<parsed_input_graph_t>& graphs,
-	std::map<vertex_label_t, value_t> freq_vertex_labels,
-	std::map<edge_label_t, value_t> freq_edge_labels);
+	const std::map<vertex_label_t, value_t> freq_vertex_labels,
+	const std::map<edge_label_t, value_t> freq_edge_labels);
 
 }

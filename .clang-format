@@ -1,0 +1,10 @@
+---
+Language: Cpp
+IndentWidth: 4
+TabWidth: 4
+UseTab: AlignWithSpaces
+PointerAlignment: Left
+BreakBeforeBraces: Allman
+AlwaysBreakAfterReturnType: None
+PenaltyReturnTypeOnItsOwnLine: 1000000
+ColumnLimit: 100

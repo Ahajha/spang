@@ -30,7 +30,7 @@ struct graph_t
 	graph_id_t id;
 	int n_edges = 0;
 	std::vector<vertex_t> vertices;
-	
+
 	//! Adds an undirected edge to the graph.
 	void add_edge(vertex_id_t from_id, edge_label_t edge_label, vertex_id_t to_id)
 	{
@@ -41,4 +41,4 @@ struct graph_t
 	}
 };
 
-}
+} // namespace spang

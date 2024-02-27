@@ -4,5 +4,9 @@ build/
 # clangd cache
 .cache
 
-# Conan generated file
+# Conan generated files
 CMakeUserPresets.json
+conan.lock
+conanbuildinfo.txt
+conaninfo.txt
+graph_info.json

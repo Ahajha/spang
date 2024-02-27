@@ -1,0 +1,11 @@
+name: Build using Conan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    uses: Ahajha/conan-github-workflow/.github/workflows/conan-build.yml@main

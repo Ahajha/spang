@@ -51,7 +51,7 @@ class timer
 			std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 		// Seconds also encodes milliseconds.
-		const auto s = (total_ms % (1000 * 60)) / 1000.0;
+		const auto s = static_cast<double>((total_ms % (1000 * 60))) / 1000.0;
 		const auto m = (total_ms / (1000 * 60)) % 60;
 		const auto h = total_ms / (1000 * 60 * 60);
 

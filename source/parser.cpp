@@ -1,6 +1,6 @@
-#include <graph.hpp>
-#include <logger.hpp>
-#include <parser.hpp>
+#include <spang/graph.hpp>
+#include <spang/logger.hpp>
+#include <spang/parser.hpp>
 
 #include <sstream>
 #include <string>

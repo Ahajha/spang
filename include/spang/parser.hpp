@@ -1,6 +1,7 @@
 #pragma once
 
-#include <graph.hpp>
+#include <spang/graph.hpp>
+
 #include <iostream>
 #include <set>
 #include <vector>

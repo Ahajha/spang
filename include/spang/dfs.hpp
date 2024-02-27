@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graph.hpp"
+#include "spang/graph.hpp"
 
 namespace spang
 {

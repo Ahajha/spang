@@ -1,7 +1,8 @@
 #pragma once
 
-#include "graph.hpp"
-#include "parser.hpp"
+#include "spang/graph.hpp"
+#include "spang/parser.hpp"
+
 #include <map>
 #include <memory>
 #include <span>

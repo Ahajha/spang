@@ -1,4 +1,4 @@
-#include "preprocess.hpp"
+#include "spang/preprocess.hpp"
 
 #include <algorithm>
 #include <set>
@@ -70,7 +70,6 @@ find_frequent_label_occurrences(const std::vector<parsed_input_graph_t>& graphs,
 	std::erase_if(freq_vertex_labels, prune_infrequent{min_freq});
 	std::erase_if(freq_edge_labels, prune_infrequent{min_freq});
 
-	return {freq_vertex_labels, freq_edge_labels};
 }
 
 std::pair<std::map<vertex_label_t, occurrence_count>, std::map<edge_label_t, occurrence_count>>
@@ -114,7 +113,6 @@ find_frequent_labels(const std::vector<parsed_input_graph_t>& graphs, std::size_
 	std::erase_if(freq_vertex_labels, prune_infrequent{min_freq});
 	std::erase_if(freq_edge_labels, prune_infrequent{min_freq});
 
-	return {freq_vertex_labels, freq_edge_labels};
 }
 
 compact_graph_t::compact_graph_t(const graph_t& source)
@@ -136,8 +134,6 @@ compact_graph_t::compact_graph_t(const graph_t& source)
 template <class value_t>
 std::vector<compact_graph_t> prune_infrequent_labels(
 	const std::vector<parsed_input_graph_t>& graphs,
-	const std::map<vertex_label_t, value_t> freq_vertex_labels,
-	const std::map<edge_label_t, value_t> freq_edge_labels)
 {
 	std::vector<compact_graph_t> result;
 	result.reserve(graphs.size());

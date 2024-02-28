@@ -107,10 +107,17 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	if (!maybe_min_instances.has_value())
 		return false;
 
+	// First code has been validated
 	for (const auto& code : dfs_code_list | std::views::drop(1))
 	{
-		(void)code;
-		// TODO
+		if (code.is_backwards())
+		{
+			// TODO
+		}
+		else
+		{
+			// TODO
+		}
 	}
 
 	return true;

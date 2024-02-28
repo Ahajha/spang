@@ -1,5 +1,6 @@
 #include <spang/dfs.hpp>
 #include <spang/is_min.hpp>
+#include <spang/projection.hpp>
 
 #include <cassert>
 #include <optional>
@@ -45,7 +46,7 @@ constexpr bool first_less_than(const dfs_edge_t& dfs1, const dfs_edge_t& dfs2)
 	// The first edge is essentially just defined as 3 labels.
 	return lexicographic_less(dfs1.from_label, dfs2.from_label, dfs1.edge_label, dfs2.edge_label,
 	                          dfs1.to_label, dfs2.to_label);
-};
+}
 
 /*!
 Adds the first DFS projection links
@@ -88,6 +89,49 @@ std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_c
 	return min_instances;
 }
 
+/*
+For backwards edges, check for connections from the rightmost vertex to any other connections
+on the rightmost path. (Note that there will not be any connections to the next-to-rightmost vertex)
+
+Backwards edges going towards vertices further down the RMP are considered larger, so those should
+come after.
+*/
+
+/*!
+Returns true if there are any possible backwards expansions from the rightmost vertex.
+*/
+bool exists_backwards()
+{
+	// TODO
+	return true;
+}
+
+/*!
+Returns true if the specified backwards DFS code is minimal.
+*/
+bool is_backwards_min()
+{
+	// TODO
+	return true;
+}
+
+/*!
+Returns true if the specified forwards DFS code is minimal.
+*/
+bool is_forwards_min()
+{
+	// TODO
+	return true;
+}
+
+/*!
+Adjusts the rightmost path after a forwards edge is added.
+*/
+void update_rightmost_path()
+{
+	// TODO
+}
+
 } // namespace
 
 bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
@@ -112,11 +156,14 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	{
 		if (code.is_backwards())
 		{
-			// TODO
+			if (!is_backwards_min())
+				return false;
 		}
 		else
 		{
-			// TODO
+			if (exists_backwards() || !is_forwards_min())
+				return false;
+			update_rightmost_path();
 		}
 	}
 

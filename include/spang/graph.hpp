@@ -9,7 +9,7 @@ namespace spang
 
 using graph_id_t = int;
 using vertex_id_t = std::uint16_t;
-using edge_id_t = int;
+using edge_id_t = std::uint16_t;
 using vertex_label_t = int;
 using edge_label_t = int;
 

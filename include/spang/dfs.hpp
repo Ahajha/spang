@@ -54,43 +54,6 @@ struct dfs_edge_t
 };
 
 /*!
-A 'projection' is an instance of a DFS code in an input graph. A projection link is effectively
-one edge in this instance. This eventually develops into a tree structure, where multiple new
-links may extend out of an existing one, hence the lack of a standard container such as
-std::list or std::vector.
-*/
-struct dfs_projection_link
-{
-	//! ID of the graph this link is in (not particularly memory efficient, as prev_link will
-	//! point to a link with the same ID, but leads to a simpler implementation).
-	graph_id_t graph_id;
-
-	//! The actual edge in the graph that this link represents.
-	const edge_t& edge;
-
-	//! A non-owning pointer to the previous link in the chain, or nullptr if this is
-	//! the first link.
-	const dfs_projection_link* prev_link;
-};
-
-/*!
-A 'min projection' is an instance of a DFS code in its own graph
-representation. This (also) eventually develops into a tree structure.
-*/
-struct min_dfs_projection_link
-{
-	//! The actual edge in the graph that this link represents.
-	const edge_t& edge;
-
-	//! The index of the previous link in the chain, or -1 if this is the first link. This is
-	//! different than in 'normal' projection links, since these are intended to be stored in
-	//! a vector, in a heap-like format, mainly to reduce memory footprint as well as keep the
-	//! data more compact. Also, reallocations would invalidate pointers, so indexes must be
-	//! used instead of pointers directly to the elements.
-	std::size_t prev_link_index;
-};
-
-/*!
 Compares DFS edges in various situations. A single, large comparison could be used, but
 these are written for efficiency, as in all of these cases some data can be safely ignored.
 

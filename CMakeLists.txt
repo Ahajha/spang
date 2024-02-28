@@ -21,13 +21,16 @@ target_sources(spang
 PUBLIC
     include/spang/dfs.hpp
     include/spang/graph.hpp
+    include/spang/is_min.hpp
     include/spang/logger.hpp
     include/spang/parser.hpp
     include/spang/preprocess.hpp
+    include/spang/projection.hpp
 PRIVATE
+    source/is_min.cpp
     source/parser.cpp
     source/preprocess.cpp
-    source/is_min.cpp
+    source/projection.cpp
 )
 
 add_executable(validate)

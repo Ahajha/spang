@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <cstdint>
 #include <vector>
 
@@ -35,6 +36,8 @@ struct graph_t
 	//! Adds an undirected edge to the graph.
 	void add_edge(vertex_id_t from_id, edge_label_t edge_label, vertex_id_t to_id)
 	{
+		assert(to_id < vertices.size());
+		assert(from_id < vertices.size());
 		const auto edge_id = static_cast<edge_id_t>(n_edges);
 		vertices[to_id].edges.emplace_back(to_id, from_id, edge_label, edge_id);
 		vertices[from_id].edges.emplace_back(from_id, to_id, edge_label, edge_id);

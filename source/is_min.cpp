@@ -19,8 +19,17 @@ Build a graph representation of a dfs code list.
 graph_t build_min_graph(const std::span<const dfs_edge_t> dfs_code_list)
 {
 	graph_t min_graph;
+
+	// The last edge either goes to or comes from the last vertex.
+	const auto last_node_id = std::max(dfs_code_list.back().to, dfs_code_list.back().from);
+	min_graph.vertices.resize(last_node_id + 1);
+	min_graph.vertices[0].label = dfs_code_list[0].from_label;
 	for (const auto& code : dfs_code_list)
 	{
+		if (code.is_forwards())
+		{
+			min_graph.vertices[code.to].label = code.to_label;
+		}
 		min_graph.add_edge(code.from, code.edge_label, code.to);
 	}
 	return min_graph;
@@ -57,8 +66,8 @@ std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_c
 				continue;
 
 			const dfs_edge_t new_code{
-				.to = 1,
 				.from = 0,
+				.to = 1,
 				.from_label = vertex.label,
 				.edge_label = edge.label,
 				.to_label = dst_node.label,

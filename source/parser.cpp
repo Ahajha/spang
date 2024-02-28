@@ -90,7 +90,10 @@ void output_parser::read(std::istream& stream)
 			std::size_t supp;
 			if (!(line >> pound && pound == '#' && line >> id >> asterisk && asterisk == '*' &&
 			      line >> supp))
+			{
 				log_error("line ", line_no, ", expected \"t # <id> * <support>\"");
+				return;
+			}
 
 			if (first)
 			{

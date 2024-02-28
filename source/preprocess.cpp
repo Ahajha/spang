@@ -1,8 +1,10 @@
-#include "spang/preprocess.hpp"
+#include <spang/graph.hpp>
+#include <spang/preprocess.hpp>
 
 #include <algorithm>
 #include <set>
 #include <unordered_map>
+#include <vector>
 
 namespace spang
 {

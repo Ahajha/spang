@@ -1,12 +1,13 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 namespace spang
 {
 
 using graph_id_t = int;
-using vertex_id_t = int;
+using vertex_id_t = std::uint16_t;
 using edge_id_t = int;
 using vertex_label_t = int;
 using edge_label_t = int;
@@ -28,7 +29,7 @@ struct vertex_t
 struct graph_t
 {
 	graph_id_t id;
-	int n_edges = 0;
+	std::uint32_t n_edges = 0;
 	std::vector<vertex_t> vertices;
 
 	//! Adds an undirected edge to the graph.

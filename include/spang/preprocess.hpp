@@ -1,7 +1,7 @@
 #pragma once
 
-#include "spang/graph.hpp"
-#include "spang/parser.hpp"
+#include <spang/graph.hpp>
+#include <spang/parser.hpp>
 
 #include <map>
 #include <memory>
@@ -48,7 +48,7 @@ struct compact_graph_t
 	};
 
 	graph_id_t id;
-	int n_edges = 0;
+	std::uint32_t n_edges = 0;
 	std::vector<compact_vertex_t> vertices;
 
 	//! Compacts a given graph.

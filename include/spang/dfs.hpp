@@ -100,18 +100,6 @@ suffer from type erasure, preventing optimizations.
 */
 
 /*!
-Compares two potential first edges of a DFS code sequence.
-Returns true iff the first edge is smaller than the second.
-*/
-constexpr auto first_less_than = [](const dfs_edge_t& dfs1, const dfs_edge_t& dfs2)
-{
-	// The 'from' and 'to' fields can be ignored, as they will always be 0 and 1, respectively.
-	// The first edge is essentially just defined as 3 labels.
-	return lexicographic_less(dfs1.from_label, dfs2.from_label, dfs1.edge_label, dfs2.edge_label,
-	                          dfs1.to_label, dfs2.to_label);
-};
-
-/*!
 Compares two potential forwards extensions of the same DFS code sequence.
 Returns true iff the first edge is smaller than the second.
 */

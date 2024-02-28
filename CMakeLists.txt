@@ -27,6 +27,7 @@ PUBLIC
 PRIVATE
     source/parser.cpp
     source/preprocess.cpp
+    source/is_min.cpp
 )
 
 add_executable(validate)

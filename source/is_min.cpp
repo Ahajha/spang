@@ -2,6 +2,7 @@
 #include <spang/is_min.hpp>
 #include <spang/projection.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <optional>
 #include <ranges>
@@ -116,15 +117,15 @@ bool exists_backwards(const std::span<const min_dfs_projection_link>& min_instan
 		const auto& last_edge = instance_view.get_edge(rightmost_path[0]);
 		const auto& last_node = min_graph.vertices[last_edge.to];
 
-		for (const auto& last_node_edge : last_node.edges)
+		const auto is_available_backwards_edge = [&instance_view](const edge_t& edge)
 		{
-			// All we need to check is that the edge does not exist, and it would be backwards if
-			// added.
-			if (!instance_view.has_edge(last_node_edge.id) &&
-			    last_node_edge.to < last_node_edge.from)
-			{
-				return true;
-			}
+			// Check is that the edge does not exist, and it would be backwards if added.
+			return !instance_view.has_edge(edge.id) && edge.to < edge.from;
+		};
+
+		if (std::ranges::any_of(last_node.edges, is_available_backwards_edge))
+		{
+			return true;
 		}
 	}
 	return false;

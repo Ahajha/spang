@@ -119,7 +119,7 @@ bool exists_backwards(const std::span<const min_dfs_projection_link>& min_instan
 
 		const auto is_available_backwards_edge = [&instance_view](const edge_t& edge)
 		{
-			// Check is that the edge does not exist, and it would be backwards if added.
+			// Check that the edge does not exist, and it would be backwards if added.
 			return !instance_view.has_edge(edge.id) && edge.to < edge.from;
 		};
 

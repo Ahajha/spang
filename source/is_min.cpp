@@ -93,17 +93,41 @@ std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_c
 For backwards edges, check for connections from the rightmost vertex to any other connections
 on the rightmost path. (Note that there will not be any connections to the next-to-rightmost vertex)
 
-Backwards edges going towards vertices further down the RMP are considered larger, so those should
-come after.
+Backwards edges going towards vertices further down the RMP are considered small, so those should
+come first.
 */
 
 /*!
 Returns true if there are any possible backwards expansions from the rightmost vertex.
+
+TODO: This is simplified enough that it may be significantly faster if it is just put directly
+in is_forwards_min.
 */
-bool exists_backwards()
+bool exists_backwards(const std::span<const min_dfs_projection_link>& min_instances,
+                      const std::size_t instance_start_index, const std::size_t instance_end_index,
+                      projection_view& instance_view, const graph_t& min_graph,
+                      const std::span<const edge_id_t> rightmost_path)
 {
-	// TODO
-	return true;
+	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
+	     ++instance_index)
+	{
+		instance_view.build_min_view_edges_only(min_graph, min_instances, instance_index);
+
+		const auto& last_edge = instance_view.get_edge(rightmost_path[0]);
+		const auto& last_node = min_graph.vertices[last_edge.to];
+
+		for (const auto& last_node_edge : last_node.edges)
+		{
+			// All we need to check is that the edge does not exist, and it would be backwards if
+			// added.
+			if (!instance_view.has_edge(last_node_edge.id) &&
+			    last_node_edge.to < last_node_edge.from)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /*!
@@ -127,8 +151,9 @@ bool is_forwards_min()
 /*!
 Adjusts the rightmost path after a forwards edge is added.
 */
-void update_rightmost_path()
+void update_rightmost_path(std::vector<edge_id_t>& rightmost_path)
 {
+	(void)rightmost_path;
 	// TODO
 }
 
@@ -140,7 +165,7 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	assert(dfs_code_list[0].from == 0);
 	assert(dfs_code_list[0].to == 1);
 
-	std::vector<vertex_id_t> rightmost_path{0};
+	std::vector<edge_id_t> rightmost_path{0};
 	const auto min_graph = build_min_graph(dfs_code_list);
 
 	if (dfs_code_list.size() == 1)
@@ -151,9 +176,14 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	if (!maybe_min_instances.has_value())
 		return false;
 
-	// First code has been validated
+	std::vector<min_dfs_projection_link> min_instances;
+	std::size_t instance_start_index = 0;
+	projection_view instance_view(min_graph.n_edges, min_graph.vertices.size());
+
+	// First code has been validated already
 	for (const auto& code : dfs_code_list | std::views::drop(1))
 	{
+		const std::size_t instance_end_index = min_instances.size();
 		if (code.is_backwards())
 		{
 			if (!is_backwards_min())
@@ -161,10 +191,14 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 		}
 		else
 		{
-			if (exists_backwards() || !is_forwards_min())
+			if (exists_backwards(min_instances, instance_start_index, instance_end_index,
+			                     instance_view, min_graph, rightmost_path) ||
+			    !is_forwards_min())
 				return false;
-			update_rightmost_path();
+			update_rightmost_path(rightmost_path);
 		}
+
+		instance_start_index = instance_end_index;
 	}
 
 	return true;

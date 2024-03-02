@@ -80,17 +80,4 @@ constexpr auto forwards_less_than = [](const dfs_edge_t& dfs1, const dfs_edge_t&
 	                          dfs2.to_label);
 };
 
-/*!
-Compares two potential backwards extensions of the same DFS code sequence.
-Returns true iff the first edge is smaller than the second.
-*/
-constexpr auto backwards_less_than = [](const dfs_edge_t& dfs1, const dfs_edge_t& dfs2)
-{
-	// The 'from' and 'from_label' fields can be ignored, as all backwards edge extensions
-	// must stem from the rightmost vertex. The 'to_label' field can also be ignored, as
-	// if they are different, so is 'to', and them being the same is useless for the
-	// comparison.
-	return lexicographic_less(dfs1.to, dfs2.to, dfs1.edge_label, dfs2.edge_label);
-};
-
 } // namespace spang

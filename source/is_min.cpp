@@ -320,10 +320,21 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 /*!
 Adjusts the rightmost path after a forwards edge is added.
 */
-void update_rightmost_path(std::vector<edge_id_t>& rightmost_path)
+void update_rightmost_path(std::vector<edge_id_t>& rightmost_path,
+                           const std::span<const dfs_edge_t> dfs_code_list)
 {
-	(void)rightmost_path;
-	// TODO
+	int prev_id = -1;
+	rightmost_path.clear();
+	for (auto index_plus_one = dfs_code_list.size(); index_plus_one > 0; --index_plus_one)
+	{
+		const auto& code = dfs_code_list[index_plus_one - 1];
+
+		if (code.is_forwards() && (rightmost_path.empty() || prev_id == code.to))
+		{
+			prev_id = code.from;
+			rightmost_path.push_back(static_cast<edge_id_t>(index_plus_one - 1));
+		}
+	}
 }
 
 } // namespace

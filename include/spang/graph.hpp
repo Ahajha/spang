@@ -15,7 +15,7 @@ using edge_label_t = int;
 
 struct edge_t
 {
-	vertex_id_t to, from;
+	vertex_id_t from, to;
 	edge_label_t label;
 	edge_id_t id;
 };

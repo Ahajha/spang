@@ -21,6 +21,7 @@ Build a graph representation of a dfs code list.
 graph_t build_min_graph(const std::span<const dfs_edge_t> dfs_code_list)
 {
 	graph_t min_graph;
+	min_graph.id = -1;
 
 	// The last edge either goes to or comes from the last vertex.
 	const auto last_node_id = std::max(dfs_code_list.back().to, dfs_code_list.back().from);
@@ -211,6 +212,8 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 				return false;
 			}
 
+			assert(new_code.from == dfs_code_to_verify.from);
+			assert(new_code.from_label == dfs_code_to_verify.from_label);
 			if (new_code == dfs_code_to_verify)
 			{
 				min_instances.emplace_back(edge_from_last_node, instance_index);

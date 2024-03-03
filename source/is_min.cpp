@@ -134,7 +134,7 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 										 return edge.to == rmp_edge.from;
 									 });
 
-			const bool is_backwards = rmp_edge_index == rmp_candidate_edges.end();
+			const bool is_backwards = rmp_edge_index != rmp_candidate_edges.end();
 
 			return !has_edge && is_backwards;
 		};

@@ -118,10 +118,25 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 		const auto& last_edge = instance_view.get_edge(rightmost_path[0]);
 		const auto& last_node = min_graph.vertices[last_edge.to];
 
-		const auto is_available_backwards_edge = [&instance_view](const edge_t& edge)
+		const auto is_available_backwards_edge = [&](const edge_t& edge)
 		{
-			// Check that the edge does not exist, and it would be backwards if added.
-			return !instance_view.has_edge(edge.id) && edge.to < edge.from;
+			const bool has_edge = instance_view.has_edge(edge.id);
+
+			// Similar check to is_backwards_min
+			const auto rmp_candidate_edges =
+				rightmost_path | std::views::reverse | std::views::drop(2);
+
+			const auto rmp_edge_index =
+				std::ranges::find_if(rmp_candidate_edges,
+			                         [&instance_view, &edge](const auto edge_index)
+			                         {
+										 const auto& rmp_edge = instance_view.get_edge(edge_index);
+										 return edge.to == rmp_edge.from;
+									 });
+
+			const bool is_backwards = rmp_edge_index == rmp_candidate_edges.end();
+
+			return !has_edge && is_backwards;
 		};
 
 		if (std::ranges::any_of(last_node.edges, is_available_backwards_edge))
@@ -260,9 +275,9 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 		{
 			for (const auto& edge : rmp_node.edges)
 			{
-				if (instance_view.has_edge(edge.id))
+				if (instance_view.has_vertex(edge.from))
 				{
-					// Edge already exists, skip
+					// From already exists, skip
 					continue;
 				}
 

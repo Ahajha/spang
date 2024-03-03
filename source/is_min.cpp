@@ -113,7 +113,7 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
 	     ++instance_index)
 	{
-		instance_view.build_min_view_edges_only(min_graph, min_instances, instance_index);
+		instance_view.build_min_view_no_has_vertex_info(min_graph, min_instances, instance_index);
 
 		const auto& last_edge = instance_view.get_edge(rightmost_path[0]);
 		const auto& last_node = min_graph.vertices[last_edge.to];
@@ -158,7 +158,7 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
 	     ++instance_index)
 	{
-		instance_view.build_min_view_edges_only(min_graph, min_instances, instance_index);
+		instance_view.build_min_view_no_has_vertex_info(min_graph, min_instances, instance_index);
 
 		const auto& last_edge = instance_view.get_edge(rightmost_path[0]);
 		const auto& last_node = min_graph.vertices[last_edge.to];
@@ -224,11 +224,96 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 }
 
 /*!
+Compares two potential forwards extensions of the same DFS code sequence.
+Returns true iff the first edge is smaller than the second.
+*/
+constexpr bool forwards_less_than(const dfs_edge_t& dfs1, const dfs_edge_t& dfs2)
+{
+	// The 'from_label' fields can be ignored, since if they are different, so will the
+	// 'from' fields, and if they are the same, this provides no information to the
+	// lexicographic comparison. The 'to' fields are also ignored, since both codes are
+	// given as extensions of the same existing code, and thus they will be the same.
+
+	// The 'from' field is 'reversed' in this comparison, as forward edges are considered
+	// starting from the rightmost vertex, which has the largest 'from' but should be
+	// considered the smallest edge.
+	return lexicographic_less(dfs2.from, dfs1.from, dfs1.edge_label, dfs2.edge_label, dfs1.to_label,
+	                          dfs2.to_label);
+}
+
+/*!
 Returns true if the specified forwards DFS code is minimal.
 */
-bool is_forwards_min()
+bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
+                     const std::size_t instance_start_index, const std::size_t instance_end_index,
+                     projection_view& instance_view, const graph_t& min_graph,
+                     const std::span<const edge_id_t> rightmost_path,
+                     const std::span<const dfs_edge_t> dfs_code_list,
+                     const dfs_edge_t& dfs_code_to_verify)
 {
-	// TODO
+	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
+	     ++instance_index)
+	{
+		instance_view.build_min_view_no_has_edge_info(min_graph, min_instances, instance_index);
+
+		const auto check_extensions = [&](const vertex_t rmp_node, const vertex_id_t from_id)
+		{
+			for (const auto& edge : rmp_node.edges)
+			{
+				if (instance_view.has_edge(edge.id))
+				{
+					// Edge already exists, skip
+					continue;
+				}
+
+				const dfs_edge_t new_code{
+					.from = from_id,
+					.to = static_cast<vertex_id_t>(dfs_code_list[rightmost_path[0]].to + 1),
+					.from_label = 0,
+					.edge_label = 0,
+					.to_label = 0,
+				};
+
+				if (forwards_less_than(new_code, dfs_code_to_verify))
+				{
+					return false;
+				}
+
+				// add some assertions here
+				if (new_code == dfs_code_to_verify)
+				{
+					min_instances.emplace_back(edge, instance_index);
+				}
+			}
+
+			return true;
+		};
+
+		// Check each possible edge from each node on the RMP, starting from the rightmost vertex.
+		for (const auto rmp_edge_index : rightmost_path | std::views::reverse)
+		{
+			const auto& rmp_edge = instance_view.get_edge(rmp_edge_index);
+			const auto& rmp_node = min_graph.vertices[rmp_edge.to];
+			const auto from_id = dfs_code_list[rmp_edge_index].from;
+
+			if (!check_extensions(rmp_node, from_id))
+			{
+				return false;
+			}
+
+			// TODO short circuit if possible
+		}
+		// This section is the last "iteration" of the above loop.
+		// TODO: Double check this logic
+		const auto& first_edge = instance_view.get_edge(0);
+		const auto& root_node = min_graph.vertices[first_edge.from];
+		constexpr vertex_id_t from_id = 0;
+
+		if (!check_extensions(root_node, from_id))
+		{
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -278,7 +363,8 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 		{
 			if (exists_backwards(min_instances, instance_start_index, instance_end_index,
 			                     instance_view, min_graph, rightmost_path) ||
-			    !is_forwards_min())
+			    !is_forwards_min(min_instances, instance_start_index, instance_end_index,
+			                     instance_view, min_graph, rightmost_path, dfs_code_list, code))
 				return false;
 			update_rightmost_path(rightmost_path);
 		}

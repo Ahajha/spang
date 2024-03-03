@@ -63,18 +63,20 @@ class projection_view
 	void build_view();
 
 	/*!
-	Builds a view of a min_dfs_projection. Does not set information relating to vertices.
+	Builds a view of a min_dfs_projection. Does not set information on
+	whether the graph has a vertex or not.
 	*/
-	void build_min_view_edges_only(const graph_t& min_graph,
-	                               const std::span<const min_dfs_projection_link> projections,
-	                               const std::size_t projection_start_index);
+	void build_min_view_no_has_vertex_info(
+		const graph_t& min_graph, const std::span<const min_dfs_projection_link> projections,
+		const std::size_t projection_start_index);
 
 	/*!
-	Builds a view of a min_dfs_projection. Does not set information relating to edges.
+	Builds a view of a min_dfs_projection. Does not set information on
+	whether the graph has an edge or not.
 	*/
-	void build_min_view_vertices_only(const graph_t& min_graph,
-	                                  const std::span<const min_dfs_projection_link> projections,
-	                                  const std::size_t projection_start_index);
+	void build_min_view_no_has_edge_info(const graph_t& min_graph,
+	                                     const std::span<const min_dfs_projection_link> projections,
+	                                     const std::size_t projection_start_index);
 
 	bool has_edge(edge_id_t id) { return has_edge_[id]; }
 	bool has_vertex(vertex_id_t id) { return has_vertex_[id]; }

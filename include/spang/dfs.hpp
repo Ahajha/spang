@@ -53,31 +53,4 @@ struct dfs_edge_t
 	[[nodiscard]] constexpr bool is_backwards() const { return to < from; }
 };
 
-/*!
-Compares DFS edges in various situations. A single, large comparison could be used, but
-these are written for efficiency, as in all of these cases some data can be safely ignored.
-
-Lambdas are used here as these are used as both comparisons in maps as well as directly.
-Functors are slightly less convenient to use directly, and functions used in maps
-suffer from type erasure, preventing optimizations.
-*/
-
-/*!
-Compares two potential forwards extensions of the same DFS code sequence.
-Returns true iff the first edge is smaller than the second.
-*/
-constexpr auto forwards_less_than = [](const dfs_edge_t& dfs1, const dfs_edge_t& dfs2)
-{
-	// The 'from_label' fields can be ignored, since if they are different, so will the
-	// 'from' fields, and if they are the same, this provides no information to the
-	// lexicographic comparison. The 'to' fields are also ignored, since both codes are
-	// given as extensions of the same existing code, and thus they will be the same.
-
-	// The 'from' field is 'reversed' in this comparison, as forward edges are considered
-	// starting from the rightmost vertex, which has the largest 'from' but should be
-	// considered the smallest edge.
-	return lexicographic_less(dfs2.from, dfs1.from, dfs1.edge_label, dfs2.edge_label, dfs1.to_label,
-	                          dfs2.to_label);
-};
-
 } // namespace spang

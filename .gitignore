@@ -4,6 +4,9 @@ build/
 # clangd cache
 .cache
 
+# VSCode folder
+.vscode
+
 # Conan generated files
 CMakeUserPresets.json
 conan.lock

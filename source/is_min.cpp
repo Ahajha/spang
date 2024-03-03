@@ -256,7 +256,7 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 	{
 		instance_view.build_min_view_no_has_edge_info(min_graph, min_instances, instance_index);
 
-		const auto check_extensions = [&](const vertex_t rmp_node, const vertex_id_t from_id)
+		const auto check_extensions = [&](const vertex_t& rmp_node, const vertex_id_t node_id)
 		{
 			for (const auto& edge : rmp_node.edges)
 			{
@@ -267,11 +267,11 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 				}
 
 				const dfs_edge_t new_code{
-					.from = from_id,
+					.from = node_id,
 					.to = static_cast<vertex_id_t>(dfs_code_list[rightmost_path[0]].to + 1),
-					.from_label = 0,
-					.edge_label = 0,
-					.to_label = 0,
+					.from_label = rmp_node.label,
+					.edge_label = edge.label,
+					.to_label = min_graph.vertices[edge.to].label,
 				};
 
 				if (forwards_less_than(new_code, dfs_code_to_verify))
@@ -279,7 +279,7 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 					return false;
 				}
 
-				// add some assertions here
+				assert(new_code.to == dfs_code_to_verify.to);
 				if (new_code == dfs_code_to_verify)
 				{
 					min_instances.emplace_back(edge, instance_index);
@@ -351,36 +351,40 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	if (dfs_code_list.size() == 1)
 		return true;
 
-	const auto maybe_min_instances = get_instances_of_first_dfs_code(dfs_code_list[0], min_graph);
+	auto min_instances = get_instances_of_first_dfs_code(dfs_code_list[0], min_graph);
 
-	if (!maybe_min_instances.has_value())
+	if (!min_instances.has_value())
 		return false;
 
-	std::vector<min_dfs_projection_link> min_instances;
 	std::size_t instance_start_index = 0;
 	projection_view instance_view(min_graph.n_edges, min_graph.vertices.size());
 
 	// First code has been validated already
+	std::size_t n_codes = 2;
 	for (const auto& code : dfs_code_list | std::views::drop(1))
 	{
-		const std::size_t instance_end_index = min_instances.size();
+		const std::size_t instance_end_index = min_instances->size();
 		if (code.is_backwards())
 		{
-			if (!is_backwards_min(min_instances, instance_start_index, instance_end_index,
+			if (!is_backwards_min(*min_instances, instance_start_index, instance_end_index,
 			                      instance_view, min_graph, rightmost_path, dfs_code_list, code))
 				return false;
 		}
 		else
 		{
-			if (exists_backwards(min_instances, instance_start_index, instance_end_index,
+			if (exists_backwards(*min_instances, instance_start_index, instance_end_index,
 			                     instance_view, min_graph, rightmost_path) ||
-			    !is_forwards_min(min_instances, instance_start_index, instance_end_index,
+			    !is_forwards_min(*min_instances, instance_start_index, instance_end_index,
 			                     instance_view, min_graph, rightmost_path, dfs_code_list, code))
 				return false;
-			update_rightmost_path(rightmost_path);
+
+			// TODO can just pass this around everywhere instead :)
+			const auto sublist = dfs_code_list.first(n_codes);
+			update_rightmost_path(rightmost_path, sublist);
 		}
 
 		instance_start_index = instance_end_index;
+		++n_codes;
 	}
 
 	return true;

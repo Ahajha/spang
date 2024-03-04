@@ -265,6 +265,8 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
                      const std::span<const edge_id_t> rightmost_path,
                      const std::span<const dfs_edge_t> dfs_code_list)
 {
+	const auto& dfs_code_to_verify = dfs_code_list.back();
+
 	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
 	     ++instance_index)
 	{
@@ -288,8 +290,6 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 					.to_label = min_graph.vertices[edge.to].label,
 				};
 
-				const auto& dfs_code_to_verify = dfs_code_list.back();
-
 				assert(new_code.to == dfs_code_to_verify.to);
 				if (forwards_less_than(new_code, dfs_code_to_verify))
 				{
@@ -309,8 +309,7 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 
 		// This section is the first "iteration" of the loop below.
 		{
-			const auto& last_forwards_edge =
-				instance_view.get_edge(rightmost_path[0]); // this is not the last forwards edge!
+			const auto& last_forwards_edge = instance_view.get_edge(rightmost_path[0]);
 			const auto& rightmost_node = min_graph.vertices[last_forwards_edge.to];
 			const auto node_id = dfs_code_list[rightmost_path[0]].to;
 
@@ -319,7 +318,11 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 				return false;
 			}
 
-			// TODO short circuit if possible
+			// Any other nodes along the RMP would produce larger codes, so no need to check.
+			if (dfs_code_to_verify.from == node_id)
+			{
+				continue;
+			}
 		}
 		for (const auto rmp_edge_index : rightmost_path)
 		{
@@ -332,7 +335,11 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 				return false;
 			}
 
-			// TODO short circuit if possible
+			// Any other nodes along the RMP would produce larger codes, so no need to check.
+			if (dfs_code_to_verify.from == node_id)
+			{
+				break;
+			}
 		}
 	}
 

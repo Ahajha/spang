@@ -101,9 +101,6 @@ come first.
 
 /*!
 Returns true if there are any possible backwards expansions from the rightmost vertex.
-
-TODO: This is simplified enough that it may be significantly faster if it is just put directly
-in is_forwards_min.
 */
 bool exists_backwards(const std::span<const min_dfs_projection_link> min_instances,
                       const std::size_t instance_start_index, const std::size_t instance_end_index,
@@ -275,9 +272,9 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 		{
 			for (const auto& edge : rmp_node.edges)
 			{
-				if (instance_view.has_vertex(edge.from))
+				if (instance_view.has_vertex(edge.to))
 				{
-					// From already exists, skip
+					// To already exists, skip
 					continue;
 				}
 
@@ -289,12 +286,12 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 					.to_label = min_graph.vertices[edge.to].label,
 				};
 
+				assert(new_code.to == dfs_code_to_verify.to);
 				if (forwards_less_than(new_code, dfs_code_to_verify))
 				{
 					return false;
 				}
 
-				assert(new_code.to == dfs_code_to_verify.to);
 				if (new_code == dfs_code_to_verify)
 				{
 					min_instances.emplace_back(edge, instance_index);
@@ -305,30 +302,36 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 		};
 
 		// Check each possible edge from each node on the RMP, starting from the rightmost vertex.
-		for (const auto rmp_edge_index : rightmost_path | std::views::reverse)
-		{
-			const auto& rmp_edge = instance_view.get_edge(rmp_edge_index);
-			const auto& rmp_node = min_graph.vertices[rmp_edge.to];
-			const auto from_id = dfs_code_list[rmp_edge_index].from;
 
-			if (!check_extensions(rmp_node, from_id))
+		// This section is the first "iteration" of the loop below.
+		{
+			const auto& last_forwards_edge =
+				instance_view.get_edge(rightmost_path[0]); // this is not the last forwards edge!
+			const auto& rightmost_node = min_graph.vertices[last_forwards_edge.to];
+			const auto node_id = dfs_code_list[rightmost_path[0]].to;
+
+			if (!check_extensions(rightmost_node, node_id))
 			{
 				return false;
 			}
 
 			// TODO short circuit if possible
 		}
-		// This section is the last "iteration" of the above loop.
-		// TODO: Double check this logic
-		const auto& first_edge = instance_view.get_edge(0);
-		const auto& root_node = min_graph.vertices[first_edge.from];
-		constexpr vertex_id_t from_id = 0;
-
-		if (!check_extensions(root_node, from_id))
+		for (const auto rmp_edge_index : rightmost_path)
 		{
-			return false;
+			const auto& rmp_edge = instance_view.get_edge(rmp_edge_index);
+			const auto& rmp_node = min_graph.vertices[rmp_edge.from];
+			const auto node_id = dfs_code_list[rmp_edge_index].from;
+
+			if (!check_extensions(rmp_node, node_id))
+			{
+				return false;
+			}
+
+			// TODO short circuit if possible
 		}
 	}
+
 	return true;
 }
 
@@ -338,6 +341,8 @@ Adjusts the rightmost path after a forwards edge is added.
 void update_rightmost_path(std::vector<edge_id_t>& rightmost_path,
                            const std::span<const dfs_edge_t> dfs_code_list)
 {
+	// The last code to be added was forwards
+	assert(dfs_code_list.back().is_forwards());
 	int prev_id = -1;
 	rightmost_path.clear();
 	for (auto index_plus_one = dfs_code_list.size(); index_plus_one > 0; --index_plus_one)
@@ -359,6 +364,7 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	assert(!dfs_code_list.empty());
 	assert(dfs_code_list[0].from == 0);
 	assert(dfs_code_list[0].to == 1);
+	assert(dfs_code_list[0].from_label <= dfs_code_list[0].to_label);
 
 	std::vector<edge_id_t> rightmost_path{0};
 	const auto min_graph = build_min_graph(dfs_code_list);

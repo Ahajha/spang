@@ -81,7 +81,11 @@ class projection_view
 	bool has_edge(edge_id_t id) { return has_edge_[id]; }
 	bool has_vertex(vertex_id_t id) { return has_vertex_[id]; }
 
-	const edge_t& get_edge(edge_id_t id) { return *contained_edges[id]; }
+	const edge_t& get_edge(edge_id_t id)
+	{
+		const auto index = n_contained_edges - id - 1;
+		return *contained_edges[index];
+	}
 
   private:
 	std::unique_ptr<bool[]> has_edge_;

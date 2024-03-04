@@ -119,7 +119,8 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 
 		const auto is_available_backwards_edge = [&](const edge_t& edge)
 		{
-			const bool has_edge = instance_view.has_edge(edge.id);
+			if (instance_view.has_edge(edge.id))
+				return false;
 
 			// Similar check to is_backwards_min
 			const auto rmp_candidate_edges = rightmost_path | std::views::drop(1);
@@ -132,9 +133,7 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 										 return edge.to == rmp_edge.from;
 									 });
 
-			const bool is_backwards = rmp_edge_index != rmp_candidate_edges.end();
-
-			return !has_edge && is_backwards;
+			return rmp_edge_index != rmp_candidate_edges.end();
 		};
 
 		if (std::ranges::any_of(last_node.edges, is_available_backwards_edge))

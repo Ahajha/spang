@@ -122,8 +122,7 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 			const bool has_edge = instance_view.has_edge(edge.id);
 
 			// Similar check to is_backwards_min
-			const auto rmp_candidate_edges =
-				rightmost_path | std::views::reverse | std::views::drop(2);
+			const auto rmp_candidate_edges = rightmost_path | std::views::drop(1);
 
 			const auto rmp_edge_index =
 				std::ranges::find_if(rmp_candidate_edges,
@@ -185,10 +184,9 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 			}
 
 			// Check which RMP vertex this connects to.
-			// Start from the rightmost vertex, going towards the root. Skip the first two
-			// since it isn't possible to go to them.
-			const auto rmp_candidate_edges =
-				rightmost_path | std::views::reverse | std::views::drop(2);
+			// We are checking the from fields of each edge, so skip the first one
+			// since that's where the RMV came from.
+			const auto rmp_candidate_edges = rightmost_path | std::views::drop(1);
 
 			const auto rmp_edge_index =
 				std::ranges::find_if(rmp_candidate_edges,
@@ -198,14 +196,7 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 										 return edge_from_last_node.to == rmp_edge.from;
 									 });
 
-			if (rmp_edge_index == rmp_candidate_edges.end())
-			{
-				// Doesn't connect to any RMP vertex, skip
-				// Minor todo: Maybe if we build vertex info, this can be checked earlier by
-				// checking if the edge is forwards. Then can assert this will never happen after
-				// the search.
-				continue;
-			}
+			assert(rmp_edge_index != rmp_candidate_edges.end());
 
 			const auto& rmp_edge = instance_view.get_edge(*rmp_edge_index);
 			const auto& to_node = min_graph.vertices[rmp_edge.from];

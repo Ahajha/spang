@@ -78,10 +78,13 @@ class projection_view
 	                                     const std::span<const min_dfs_projection_link> projections,
 	                                     const std::size_t projection_start_index);
 
-	bool has_edge(edge_id_t id) { return has_edge_[id]; }
-	bool has_vertex(vertex_id_t id) { return has_vertex_[id]; }
+	bool has_edge(const edge_id_t id) { return has_edge_[id]; }
+	bool has_vertex(const vertex_id_t id) { return has_vertex_[id]; }
 
-	const edge_t& get_edge(edge_id_t id)
+	//! Gets the nth edge added to the graph.
+	//! Indexes correspond to the corresponding DFS code list, so get_edge(i) is
+	//! the 'actual' edge in the min graph, while dfs_code_list[i] is the DFS edge.
+	const edge_t& get_edge(const edge_id_t id)
 	{
 		const auto index = n_contained_edges - id - 1;
 		return *contained_edges[index];

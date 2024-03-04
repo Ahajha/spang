@@ -51,7 +51,9 @@ constexpr bool first_less_than(const dfs_edge_t& dfs1, const dfs_edge_t& dfs2)
 }
 
 /*!
-Adds the first DFS projection links
+Adds the first DFS projection links and verifies the first DFS code is minimal.
+
+Returns the links if it is minimal, otherwise nothing.
 */
 std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_code(
 	const dfs_edge_t& min_dfs_code, const graph_t& min_graph)
@@ -158,14 +160,13 @@ constexpr bool backwards_less_than(const dfs_edge_t& dfs1, const dfs_edge_t& dfs
 }
 
 /*!
-Returns true if the specified backwards DFS code is minimal.
+Returns true if the last DFS code provided is minimal.
 */
 bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
                       const std::size_t instance_start_index, const std::size_t instance_end_index,
                       projection_view& instance_view, const graph_t& min_graph,
                       const std::span<const edge_id_t> rightmost_path,
-                      const std::span<const dfs_edge_t> dfs_code_list,
-                      const dfs_edge_t& dfs_code_to_verify)
+                      const std::span<const dfs_edge_t> dfs_code_list)
 {
 	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
 	     ++instance_index)
@@ -209,13 +210,15 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 			const auto& rmp_edge = instance_view.get_edge(*rmp_edge_index);
 			const auto& to_node = min_graph.vertices[rmp_edge.from];
 
-			dfs_edge_t new_code{
+			const dfs_edge_t new_code{
 				.from = dfs_code_list[rightmost_path[0]].to,
 				.to = dfs_code_list[*rmp_edge_index].from,
 				.from_label = last_node.label,
 				.edge_label = edge_from_last_node.label,
 				.to_label = to_node.label,
 			};
+
+			const auto& dfs_code_to_verify = dfs_code_list.back();
 
 			// get_instances_of_first_dfs_code - similar lexicographical compare issue:
 			// might be able to optimize away some of the comparisons
@@ -254,14 +257,13 @@ constexpr bool forwards_less_than(const dfs_edge_t& dfs1, const dfs_edge_t& dfs2
 }
 
 /*!
-Returns true if the specified forwards DFS code is minimal.
+Returns true if the last DFS code provided is minimal.
 */
 bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
                      const std::size_t instance_start_index, const std::size_t instance_end_index,
                      projection_view& instance_view, const graph_t& min_graph,
                      const std::span<const edge_id_t> rightmost_path,
-                     const std::span<const dfs_edge_t> dfs_code_list,
-                     const dfs_edge_t& dfs_code_to_verify)
+                     const std::span<const dfs_edge_t> dfs_code_list)
 {
 	for (auto instance_index = instance_start_index; instance_index < instance_end_index;
 	     ++instance_index)
@@ -285,6 +287,8 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 					.edge_label = edge.label,
 					.to_label = min_graph.vertices[edge.to].label,
 				};
+
+				const auto& dfs_code_to_verify = dfs_code_list.back();
 
 				assert(new_code.to == dfs_code_to_verify.to);
 				if (forwards_less_than(new_code, dfs_code_to_verify))
@@ -370,25 +374,29 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	const auto min_graph = build_min_graph(dfs_code_list);
 
 	if (dfs_code_list.size() == 1)
+	{
 		return true;
+	}
 
 	auto min_instances = get_instances_of_first_dfs_code(dfs_code_list[0], min_graph);
 
 	if (!min_instances.has_value())
+	{
 		return false;
+	}
 
 	std::size_t instance_start_index = 0;
 	projection_view instance_view(min_graph.n_edges, min_graph.vertices.size());
 
 	// First code has been validated already
-	std::size_t n_codes = 2;
-	for (const auto& code : dfs_code_list | std::views::drop(1))
+	for (std::size_t n_codes = 2; n_codes <= dfs_code_list.size(); ++n_codes)
 	{
+		const auto sublist = dfs_code_list.first(n_codes);
 		const std::size_t instance_end_index = min_instances->size();
-		if (code.is_backwards())
+		if (sublist.back().is_backwards())
 		{
 			if (!is_backwards_min(*min_instances, instance_start_index, instance_end_index,
-			                      instance_view, min_graph, rightmost_path, dfs_code_list, code))
+			                      instance_view, min_graph, rightmost_path, sublist))
 				return false;
 		}
 		else
@@ -396,16 +404,13 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 			if (exists_backwards(*min_instances, instance_start_index, instance_end_index,
 			                     instance_view, min_graph, rightmost_path) ||
 			    !is_forwards_min(*min_instances, instance_start_index, instance_end_index,
-			                     instance_view, min_graph, rightmost_path, dfs_code_list, code))
+			                     instance_view, min_graph, rightmost_path, sublist))
 				return false;
 
-			// TODO can just pass this around everywhere instead :)
-			const auto sublist = dfs_code_list.first(n_codes);
 			update_rightmost_path(rightmost_path, sublist);
 		}
 
 		instance_start_index = instance_end_index;
-		++n_codes;
 	}
 
 	return true;

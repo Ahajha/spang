@@ -15,6 +15,12 @@ TEST_CASE("is_min")
 	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},dfs_edge_t{1,2,0,0,0},dfs_edge_t{2,0,0,0,0},}));
 	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},dfs_edge_t{1,2,0,0,0},dfs_edge_t{2,0,0,0,0},dfs_edge_t{2,3,0,0,0},}));
 
+    // Complete graph with 5 vertices
+	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},dfs_edge_t{1,2,0,0,0},dfs_edge_t{2,0,0,0,0},
+                            dfs_edge_t{2,3,0,0,0},dfs_edge_t{3,0,0,0,0},dfs_edge_t{3,1,0,0,0},
+                            dfs_edge_t{3,4,0,0,0},dfs_edge_t{4,0,0,0,0},dfs_edge_t{4,1,0,0,0},
+                            dfs_edge_t{4,2,0,0,0},}));
+
 	// The following tests were generated from gBolt calls to is_min, using Chemical_340 and a
 	// support of 20%. For now we assume that implementation is correct.
 

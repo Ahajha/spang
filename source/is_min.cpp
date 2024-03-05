@@ -195,7 +195,14 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 										 return edge_from_last_node.to == rmp_edge.from;
 									 });
 
-			assert(rmp_edge_index != rmp_candidate_edges.end());
+			if (rmp_edge_index == rmp_candidate_edges.end())
+			{
+				// Doesn't connect to any RMP vertex, skip
+				// Minor todo: Maybe if we build vertex info, this can be checked earlier by
+				// checking if the edge is forwards. Then can assert this will never happen after
+				// the search.
+				continue;
+			}
 
 			const auto& rmp_edge = instance_view.get_edge(*rmp_edge_index);
 			const auto& to_node = min_graph.vertices[rmp_edge.from];

@@ -9,12 +9,15 @@ using spang::is_min;
 
 TEST_CASE("is_min")
 {
-	CHECK(is_min(std::array{dfs_edge_t{0, 1, 2, 3, 4}}));
+	// clang-format off
+	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},}));
+	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},dfs_edge_t{1,2,0,0,0},}));
+	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},dfs_edge_t{1,2,0,0,0},dfs_edge_t{2,0,0,0,0},}));
+	CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,0},dfs_edge_t{1,2,0,0,0},dfs_edge_t{2,0,0,0,0},dfs_edge_t{2,3,0,0,0},}));
 
 	// The following tests were generated from gBolt calls to is_min, using Chemical_340 and a
 	// support of 20%. For now we assume that implementation is correct.
 
-	// clang-format off
     CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,1},}));
     CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,1},dfs_edge_t{0,2,0,3,0},}));
     CHECK(is_min(std::array{dfs_edge_t{0,1,0,0,1},dfs_edge_t{0,2,0,3,0},dfs_edge_t{0,3,0,3,0},}));

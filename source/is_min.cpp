@@ -68,7 +68,9 @@ std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_c
 			// code. If the opposite edge is lower, then there is no point comparing this one.
 			const auto& dst_node = min_graph.vertices[edge.to];
 			if (vertex.label > dst_node.label)
+			{
 				continue;
+			}
 
 			const dfs_edge_t new_code{
 				.from = 0,
@@ -80,13 +82,17 @@ std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_c
 
 			// Lexicographically compare labels
 			if (first_less_than(new_code, min_dfs_code))
+			{
 				return {};
+			}
 
 			// TODO: This is likely redoing some work from the previous comparison, plus
 			// we don't need to compare the to and from fields. Maybe [[assume]] can help?
 			// Or maybe use a three way lexicographical comparison with just the labels?
 			if (new_code == min_dfs_code)
+			{
 				min_instances.emplace_back(edge, -1);
+			}
 		}
 	}
 
@@ -120,7 +126,9 @@ bool exists_backwards(const std::span<const min_dfs_projection_link> min_instanc
 		const auto is_available_backwards_edge = [&](const edge_t& edge)
 		{
 			if (instance_view.has_edge(edge.id))
+			{
 				return false;
+			}
 
 			// Similar check to is_backwards_min
 			const auto rmp_candidate_edges = rightmost_path | std::views::drop(1);
@@ -401,7 +409,9 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 		{
 			if (!is_backwards_min(*min_instances, instance_start_index, instance_end_index,
 			                      instance_view, min_graph, rightmost_path, sublist))
+			{
 				return false;
+			}
 		}
 		else
 		{
@@ -409,7 +419,9 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 			                     instance_view, min_graph, rightmost_path) ||
 			    !is_forwards_min(*min_instances, instance_start_index, instance_end_index,
 			                     instance_view, min_graph, rightmost_path, sublist))
+			{
 				return false;
+			}
 
 			update_rightmost_path(rightmost_path, sublist);
 		}

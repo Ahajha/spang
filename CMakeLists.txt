@@ -20,6 +20,7 @@ target_include_directories(spang PUBLIC include)
 target_sources(spang
 PUBLIC
     include/spang/dfs.hpp
+    include/spang/extend.hpp
     include/spang/graph.hpp
     include/spang/is_min.hpp
     include/spang/logger.hpp
@@ -27,6 +28,7 @@ PUBLIC
     include/spang/preprocess.hpp
     include/spang/projection.hpp
 PRIVATE
+    source/extend.cpp
     source/is_min.cpp
     source/parser.cpp
     source/preprocess.cpp

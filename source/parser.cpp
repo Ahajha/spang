@@ -53,6 +53,9 @@ void input_parser::read(std::istream& stream)
 			if (!(line >> from >> to >> label))
 				log_error("line ", line_no, ", expected \"e <from_id> <to_id> <label>\"");
 
+			// TODO: Proper error reporting for this
+			assert(graphs.back().vertices.size() > static_cast<std::size_t>(from));
+			assert(graphs.back().vertices.size() > static_cast<std::size_t>(to));
 			graphs.back().edges.emplace_back(from, to, label);
 			break;
 		}

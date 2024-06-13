@@ -59,9 +59,16 @@ void input_parser::read(std::istream& stream)
 			graphs.back().edges.emplace_back(from, to, label);
 			break;
 		}
+		case '#':
+		{
+			// Comment, do nothing.
+			break;
+		}
 		default:
+		{
 			log_error("invalid token '", line_type, "' on line ", line_no,
 			          ", expected t, v, or e.");
+		}
 		}
 	}
 }

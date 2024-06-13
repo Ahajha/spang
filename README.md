@@ -11,7 +11,7 @@ e <from_id> <to_id> <label>
 t # <index>
 ...
 ```
-Takes a list of graphs, with each graph starting with `t #` followed by its ID (an integer). The graph is then followed by its list of vertices (each starting with `v`) and list of edges (each starting with `e`). All IDs and labels must be integers, and may be negative. IDs may be in any order, though it is generally simpler to order them sequentially from 0.
+Takes a list of graphs, with each graph starting with `t #` followed by its ID (an integer). The graph is then followed by its list of vertices (each starting with `v`) and list of edges (each starting with `e`). All IDs and labels must be integers, and may be negative. IDs may be in any order, though it is generally simpler to order them sequentially from 0. Comments may be added by starting a line with "#".
 
 ## Output format
 ```

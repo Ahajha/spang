@@ -30,7 +30,7 @@ struct prune_infrequent
 
 std::pair<std::map<vertex_label_t, std::vector<graph_id_t>>,
           std::map<edge_label_t, std::vector<graph_id_t>>>
-find_frequent_label_occurrences(const std::vector<parsed_input_graph_t>& graphs,
+find_frequent_label_occurrences(const std::span<const parsed_input_graph_t> graphs,
                                 std::size_t min_freq)
 {
 	// Start by creating maps containing all labels, then prune infrequent ones
@@ -76,7 +76,7 @@ find_frequent_label_occurrences(const std::vector<parsed_input_graph_t>& graphs,
 }
 
 std::pair<std::map<vertex_label_t, occurrence_count>, std::map<edge_label_t, occurrence_count>>
-find_frequent_labels(const std::vector<parsed_input_graph_t>& graphs, std::size_t min_freq)
+find_frequent_labels(const std::span<const parsed_input_graph_t> graphs, std::size_t min_freq)
 {
 	// Start by creating maps containing all labels, then prune infrequent ones
 	// later.
@@ -137,7 +137,7 @@ compact_graph_t::compact_graph_t(const graph_t& source)
 
 template <class value_t>
 std::vector<compact_graph_t> prune_infrequent_labels(
-	const std::vector<parsed_input_graph_t>& graphs,
+	const std::span<const parsed_input_graph_t>& graphs,
 	const std::map<vertex_label_t, value_t>& freq_vertex_labels,
 	const std::map<edge_label_t, value_t>& freq_edge_labels)
 {

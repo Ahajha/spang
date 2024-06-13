@@ -16,9 +16,9 @@ namespace spang
 Searches graphs for each vertex and edge label that occurs in at least min_freq graphs.
 For each frequent label, includes a list of graphs that the label occurs in.
 */
-std::pair<std::map<vertex_label_t, std::vector<graph_id_t>>,
-          std::map<edge_label_t, std::vector<graph_id_t>>>
-find_frequent_label_occurrences(const std::vector<parsed_input_graph_t>& graphs,
+[[nodiscard]] std::pair<std::map<vertex_label_t, std::vector<graph_id_t>>,
+                        std::map<edge_label_t, std::vector<graph_id_t>>>
+find_frequent_label_occurrences(const std::span<const parsed_input_graph_t> graphs,
                                 std::size_t min_freq);
 
 /*!
@@ -31,8 +31,9 @@ using occurrence_count = std::size_t;
 Searches graphs for each vertex and edge label that occurs in at least min_freq graphs.
 For each frequent label, includes the number of graphs the label occurs in.
 */
-std::pair<std::map<vertex_label_t, occurrence_count>, std::map<edge_label_t, occurrence_count>>
-find_frequent_labels(const std::vector<parsed_input_graph_t>& graphs, std::size_t min_freq);
+[[nodiscard]] std::pair<std::map<vertex_label_t, occurrence_count>,
+                        std::map<edge_label_t, occurrence_count>>
+find_frequent_labels(const std::span<const parsed_input_graph_t> graphs, std::size_t min_freq);
 
 /*!
 Compact graph representation. Micro-optimization to
@@ -66,8 +67,8 @@ to an adjacency list format.
 A std::set would be used, but this is intended to be used with the functions above.)
 */
 template <class value_t>
-std::vector<compact_graph_t> prune_infrequent_labels(
-	const std::vector<parsed_input_graph_t>& graphs,
+[[nodiscard]] std::vector<compact_graph_t> prune_infrequent_labels(
+	const std::span<const parsed_input_graph_t>& graphs,
 	const std::map<vertex_label_t, value_t> freq_vertex_labels,
 	const std::map<edge_label_t, value_t> freq_edge_labels);
 

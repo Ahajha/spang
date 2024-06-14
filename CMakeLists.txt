@@ -27,6 +27,7 @@ PUBLIC
     include/spang/parser.hpp
     include/spang/preprocess.hpp
     include/spang/projection.hpp
+    include/spang/utility.hpp
 PRIVATE
     source/extend.cpp
     source/is_min.cpp

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <spang/dfs.hpp>
+#include <spang/preprocess.hpp>
 #include <spang/projection.hpp>
 #include <spang/utility.hpp>
 
@@ -33,7 +34,7 @@ using extension_map =
 /*
 Find extensions of a dfs code sequence within a given database.
 */
-extension_map extend(const std::span<const graph_t> graphs,
+extension_map extend(const std::span<const compact_graph_t> graphs,
                      const std::span<const dfs_edge_t> dfs_code_list,
                      const std::span<const dfs_projection_link> subinstances,
                      const std::span<const dfs_edge_t> rightmost_path);

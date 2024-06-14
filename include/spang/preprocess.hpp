@@ -13,29 +13,6 @@ namespace spang
 {
 
 /*!
-Searches graphs for each vertex and edge label that occurs in at least min_freq graphs.
-For each frequent label, includes a list of graphs that the label occurs in.
-*/
-[[nodiscard]] std::pair<std::map<vertex_label_t, std::vector<graph_id_t>>,
-                        std::map<edge_label_t, std::vector<graph_id_t>>>
-find_frequent_label_occurrences(const std::span<const parsed_input_graph_t> graphs,
-                                std::size_t min_freq);
-
-/*!
-An occurrence count must be large enough to potentially include all graphs. A graph_id_t
-would also be sufficient here.
-*/
-using occurrence_count = std::size_t;
-
-/*!
-Searches graphs for each vertex and edge label that occurs in at least min_freq graphs.
-For each frequent label, includes the number of graphs the label occurs in.
-*/
-[[nodiscard]] std::pair<std::map<vertex_label_t, occurrence_count>,
-                        std::map<edge_label_t, occurrence_count>>
-find_frequent_labels(const std::span<const parsed_input_graph_t> graphs, std::size_t min_freq);
-
-/*!
 Compact graph representation. Micro-optimization to
 avoid cache misses while observing a single graph.
 */
@@ -61,15 +38,13 @@ struct compact_graph_t
 };
 
 /*!
-Prunes infrequent edges and vertices and converts from a edge list
-to an adjacency list format.
-(Note: the values in frequency are ignored, only the keys are used.
-A std::set would be used, but this is intended to be used with the functions above.)
+Prunes edges and vertices that would not be in any frequent 1-edge graphs and converts
+from a edge list to an adjacency list format.
+
+Will remove data from graphs as it is converted, in order to prevent two full copies
+of the data from residing in memory.
 */
-template <class value_t>
-[[nodiscard]] std::vector<compact_graph_t> prune_infrequent_labels(
-	const std::span<const parsed_input_graph_t>& graphs,
-	const std::map<vertex_label_t, value_t> freq_vertex_labels,
-	const std::map<edge_label_t, value_t> freq_edge_labels);
+[[nodiscard]] auto preprocess(std::vector<parsed_input_graph_t>&& graphs, std::size_t min_freq)
+	-> std::vector<compact_graph_t>;
 
 } // namespace spang

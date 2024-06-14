@@ -14,7 +14,7 @@ namespace
 Adds candidate backwards edges to the extension map.
 */
 void extend_backwards(const dfs_projection_link& subinstance, const projection_view& instance_view,
-                      const graph_t& graph, const std::span<const dfs_edge_t> dfs_code_list,
+                      const compact_graph_t& graph, const std::span<const dfs_edge_t> dfs_code_list,
                       const std::span<const edge_id_t> rightmost_path, extension_map& map)
 {
 	const auto& last_edge = instance_view.get_edge(rightmost_path[0]);
@@ -82,7 +82,7 @@ Adds candidate forwards edges extending from the rightmost vertex.
 */
 void extend_forwards_from_rightmost_vertex(const dfs_projection_link& subinstance,
                                            const projection_view& instance_view,
-                                           const graph_t& graph,
+                                           const compact_graph_t& graph,
                                            const std::span<const dfs_edge_t> dfs_code_list,
                                            const std::span<const edge_id_t> rightmost_path,
                                            extension_map& map)
@@ -120,7 +120,8 @@ Adds candidate forwards edge extending from the vertices on the rightmost path (
 rightmost vertex).
 */
 void extend_forwards_from_rightmost_path(const dfs_projection_link& subinstance,
-                                         const projection_view& instance_view, const graph_t& graph,
+                                         const projection_view& instance_view,
+                                         const compact_graph_t& graph,
                                          const std::span<const dfs_edge_t> dfs_code_list,
                                          const std::span<const edge_id_t> rightmost_path,
                                          extension_map& map)
@@ -169,7 +170,7 @@ void extend_forwards_from_rightmost_path(const dfs_projection_link& subinstance,
 }
 } // namespace
 
-extension_map extend(const std::span<const graph_t> graphs,
+extension_map extend(const std::span<const compact_graph_t> graphs,
                      const std::span<const dfs_edge_t> dfs_code_list,
                      const std::span<const dfs_projection_link> subinstances,
                      const std::span<const edge_id_t> rightmost_path)

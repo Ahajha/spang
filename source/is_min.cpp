@@ -1,6 +1,7 @@
 #include <spang/dfs.hpp>
 #include <spang/is_min.hpp>
 #include <spang/projection.hpp>
+#include <spang/utility.hpp>
 
 #include <algorithm>
 #include <cassert>

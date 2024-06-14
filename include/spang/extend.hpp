@@ -2,6 +2,7 @@
 
 #include <spang/dfs.hpp>
 #include <spang/projection.hpp>
+#include <spang/utility.hpp>
 
 #include <span>
 // TODO probably want a faster map, can also try std::map
@@ -12,7 +13,7 @@ namespace spang
 
 struct dfs_edge_hash
 {
-	std::size_t operator()(const spang::dfs_edge_t& dfs_edge) const
+	std::size_t operator()(const dfs_edge_t& dfs_edge) const
 	{
 		std::size_t seed{0};
 		// Ignoring the from field, since within the same map all from fields will be the same.
@@ -23,13 +24,6 @@ struct dfs_edge_hash
 		// uniquely determine the to label? If so, this can be omitted.
 		hash_combine(seed, dfs_edge.to_label);
 		return seed;
-	}
-
-  private:
-	// Based on boost::hash_combine
-	template <typename T> static void hash_combine(std::size_t& seed, T value)
-	{
-		seed ^= std::hash<T>{}(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 	}
 };
 

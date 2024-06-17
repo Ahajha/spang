@@ -18,6 +18,8 @@ struct edge_t
 	vertex_id_t from, to;
 	edge_label_t label;
 	edge_id_t id;
+
+	[[nodiscard]] constexpr bool operator==(const edge_t&) const = default;
 };
 
 struct vertex_t

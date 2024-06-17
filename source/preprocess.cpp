@@ -179,26 +179,33 @@ compact_graph_t::compact_graph_t(const graph_t& source)
 			}
 		}
 
-		for (const auto& edge : input.edges)
+		for (edge_id_t i = 0; i < input.edges.size(); ++i)
 		{
+			const auto& edge = input.edges[i];
 			const auto from_label = input.vertices[edge.from].label;
 			const auto to_label = input.vertices[edge.to].label;
 			const combined_edge_label combo{from_label, edge.label, to_label};
 
 			if (frequent_edge_labels.contains(combo))
 			{
-				scratch_graph.add_edge(edge.from, edge.label, edge.to);
+				// Can't use add_edge, need to preserve ID.
+				scratch_graph.vertices[edge.from].edges.push_back(
+					edge_t{.from = edge.from, .to = edge.to, .label = edge.label, .id = i});
+				scratch_graph.vertices[edge.to].edges.push_back(
+					edge_t{.from = edge.to, .to = edge.from, .label = edge.label, .id = i});
+				++scratch_graph.n_edges;
 			}
 		}
 
 		result.emplace_back(scratch_graph);
 
-		// Save memory as we go
-		input.vertices.clear();
-		input.edges.clear();
+		// Save memory as we go, force deallocation here
+		input.vertices = {};
+		input.edges = {};
 
 		// Reset for the next iteration
 		scratch_graph.vertices.clear();
+		scratch_graph.n_edges = 0;
 	}
 
 	return result;

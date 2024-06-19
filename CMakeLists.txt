@@ -3,10 +3,6 @@ project(spang LANGUAGES CXX)
 
 include(CTest)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 if (MSVC)
     add_compile_options(/W4 /WX)
     # Use of std::localtime gives a warning - maybe can revisit in the future
@@ -16,6 +12,7 @@ else()
 endif()
 
 add_library(spang STATIC)
+target_compile_features(spang PUBLIC cxx_std_20)
 target_include_directories(spang PUBLIC include)
 target_sources(spang
 PUBLIC

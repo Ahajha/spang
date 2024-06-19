@@ -3,6 +3,7 @@
 #include <spang/utility.hpp>
 
 #include <algorithm>
+#include <limits>
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
@@ -136,22 +137,79 @@ struct combined_edge_label_hash
 
 } // namespace
 
-compact_graph_t::compact_graph_t(const graph_t& source)
-	: id(source.id), n_edges(source.n_edges), edges(std::make_unique<edge_t[]>(2 * source.n_edges))
+compact_graph_t::compact_graph_t(const parsed_input_graph_t& input,
+                                 const std::span<const edge_t> input_edges,
+                                 std::vector<vertex_id_t>& vertex_id_to_n_edges,
+                                 std::vector<vertex_id_t>& vertex_id_map)
+	: id{input.id}, n_edges{static_cast<std::uint32_t>(input_edges.size())},
+	  edges{std::make_unique<edge_t[]>(2 * input_edges.size())}
 {
-	vertices.reserve(source.vertices.size());
-	for (auto iter = edges.get(); const auto& src_vert : source.vertices)
-	{
-		// Construct the vertex
-		vertices.emplace_back(src_vert.label, src_vert.id, std::span{iter, src_vert.edges.size()});
+	vertex_id_to_n_edges.resize(input.vertices.size());
+	std::ranges::fill(vertex_id_to_n_edges, 0);
 
-		// Copy the edges from the source graph into this one, and have the
-		// iterator point to the next edge after to prepare for the next
-		// iteration.
-		iter = std::ranges::copy(src_vert.edges, iter).out;
+	// 1: Determine # of edges per vertex
+	for (const auto& edge : input_edges)
+	{
+		++vertex_id_to_n_edges[edge.from];
+		++vertex_id_to_n_edges[edge.to];
+	}
+
+	// 2: Remap vertex indexes
+	vertex_id_map.resize(input.vertices.size());
+	vertex_id_t n_vertices{0};
+	for (vertex_id_t vertex_id{0}; vertex_id < input.vertices.size(); ++vertex_id)
+	{
+		if (vertex_id_to_n_edges[vertex_id] > 0)
+		{
+			assert(n_vertices != std::numeric_limits<vertex_id_t>::max());
+			vertex_id_map[vertex_id] = n_vertices++;
+		}
+		else
+		{
+			vertex_id_map[vertex_id] = std::numeric_limits<vertex_id_t>::max();
+		}
+	}
+
+	// 3: Prep vertices
+	vertices.reserve(n_vertices);
+	auto iter = edges.get();
+	for (vertex_id_t vertex_id{0}; vertex_id < input.vertices.size(); ++vertex_id)
+	{
+		if (vertex_id_to_n_edges[vertex_id] == 0)
+		{
+			continue;
+		}
+		const auto& src_vert = input.vertices[vertex_id];
+		assert(src_vert.id == vertex_id);
+		const std::span edge_list{iter, vertex_id_to_n_edges[vertex_id]};
+		assert(edge_list.size() != std::numeric_limits<vertex_id_t>::max());
+
+		vertices.push_back(
+			compact_vertex_t{.label = src_vert.label, .id = vertex_id, .edges = edge_list});
+
+		iter += vertex_id_to_n_edges[vertex_id];
+	}
+
+	// 4: Copy edges over
+	for (const auto& edge : input_edges)
+	{
+		const auto from = vertex_id_map[edge.from];
+		const auto to = vertex_id_map[edge.to];
+		assert(from != std::numeric_limits<vertex_id_t>::max());
+		assert(to != std::numeric_limits<vertex_id_t>::max());
+
+		// The spans are fixed size, so do some math with the number of vertices to figure out where
+		// we should put the edges:
+		auto& from_vert = vertices[from];
+		from_vert.edges[from_vert.edges.size() - vertex_id_to_n_edges[from_vert.id]--] =
+			edge_t{.from = from, .to = to, .label = edge.label, .id = edge.id};
+		auto& to_vert = vertices[to];
+		to_vert.edges[to_vert.edges.size() - vertex_id_to_n_edges[to_vert.id]--] =
+			edge_t{.from = to, .to = from, .label = edge.label, .id = edge.id};
 	}
 }
 
+// TODO:
 [[nodiscard]] auto preprocess(std::vector<parsed_input_graph_t>&& graphs, std::size_t min_freq)
 	-> std::vector<compact_graph_t>
 {
@@ -160,25 +218,15 @@ compact_graph_t::compact_graph_t(const graph_t& source)
 	const auto frequent_edge_labels =
 		find_frequent_edge_labels(graphs, frequent_vertex_labels, min_freq);
 
-	// Used for the intermediate conversion step (Adjacency list format, but not compact yet)
-	graph_t scratch_graph;
+	// Reusable scratch memory
+	std::vector<vertex_id_t> vertex_id_to_n_edges;
+	std::vector<vertex_id_t> vertex_id_map;
+	std::vector<edge_t> frequent_edges;
 
 	std::vector<compact_graph_t> result;
 
 	for (auto&& input : graphs)
 	{
-		for (const auto& vertex : input.vertices)
-		{
-			if (frequent_vertex_labels.contains(vertex.label))
-			{
-				scratch_graph.vertices.push_back(vertex_t{
-					.label = vertex.label,
-					.id = vertex.id,
-					.edges = {},
-				});
-			}
-		}
-
 		for (edge_id_t i = 0; i < input.edges.size(); ++i)
 		{
 			const auto& edge = input.edges[i];
@@ -188,24 +236,24 @@ compact_graph_t::compact_graph_t(const graph_t& source)
 
 			if (frequent_edge_labels.contains(combo))
 			{
-				// Can't use add_edge, need to preserve ID.
-				scratch_graph.vertices[edge.from].edges.push_back(
+				assert(frequent_vertex_labels.contains(from_label));
+				assert(frequent_vertex_labels.contains(to_label));
+				frequent_edges.push_back(
 					edge_t{.from = edge.from, .to = edge.to, .label = edge.label, .id = i});
-				scratch_graph.vertices[edge.to].edges.push_back(
-					edge_t{.from = edge.to, .to = edge.from, .label = edge.label, .id = i});
-				++scratch_graph.n_edges;
 			}
 		}
 
-		result.emplace_back(scratch_graph);
-
 		// Save memory as we go, force deallocation here
-		input.vertices = {};
 		input.edges = {};
 
-		// Reset for the next iteration
-		scratch_graph.vertices.clear();
-		scratch_graph.n_edges = 0;
+		if (!frequent_edges.empty())
+		{
+			result.emplace_back(input, frequent_edges, vertex_id_to_n_edges, vertex_id_map);
+		}
+
+		input.vertices = {};
+
+		frequent_edges.clear();
 	}
 
 	return result;

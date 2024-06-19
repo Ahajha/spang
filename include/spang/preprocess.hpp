@@ -29,8 +29,15 @@ struct compact_graph_t
 	std::uint32_t n_edges = 0;
 	std::vector<compact_vertex_t> vertices;
 
-	//! Compacts a given graph.
-	compact_graph_t(const graph_t& source);
+	//! Compacts a given graph into adjacency list format, given a list of edges.
+	//! (The edges in the input graph are ignored.)
+	//! Prunes infrequent edges, then removes vertices with no edges.
+	//! Relabels vertex indexes in edges as needed.
+	//! Assumes at least 1 edge.
+	//! vertex_id_to_n_edges and vertex_id_map are used as scratch memory.
+	compact_graph_t(const parsed_input_graph_t& input, const std::span<const edge_t> edges,
+	                std::vector<vertex_id_t>& vertex_id_to_n_edges,
+	                std::vector<vertex_id_t>& vertex_id_map);
 
   private:
 	// Contains all edges in a single allocation, vertices reference this via std::spans.

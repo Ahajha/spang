@@ -15,6 +15,8 @@ using edge_label_t = int;
 
 struct edge_t
 {
+	// Note: These are indexes of the vertices, which
+	// might not necessarily be the ID of that vertex.
 	vertex_id_t from, to;
 	edge_label_t label;
 	edge_id_t id;

@@ -8,4 +8,60 @@ on:
 
 jobs:
   build:
-    uses: Ahajha/conan-github-workflow/.github/workflows/conan-build.yml@main
+    runs-on: ${{ matrix.profile.os }}
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      matrix:
+        profile:
+          - os: ubuntu-latest
+            compiler: gcc
+            compiler_version: 10
+          - os: ubuntu-latest
+            compiler: clang
+            compiler_version: 16
+          - os: windows-latest
+            compiler: msvc
+            compiler_version: 193
+        build_type: ["Release", "Debug"]
+
+    steps:
+    - name: Install compiler
+      if: ${{ startsWith(matrix.profile.os, 'ubuntu') }}
+      run: |
+        if [ ${{ matrix.profile.compiler }} == "clang" ]
+        then
+            wget https://apt.llvm.org/llvm.sh
+            chmod +x llvm.sh
+            sudo ./llvm.sh ${{ matrix.profile.compiler_version }}
+            rm llvm.sh
+        else
+            sudo apt install g++-${{ matrix.profile.compiler_version }} -y
+        fi
+
+    - name: Install Conan
+      run: pip install conan
+    
+    - name: Install Conan dependencies
+      run: |
+        COMPILER_VERSION=${{ matrix.profile.compiler_version }}
+        conan install . -pr:b ${{ matrix.profile.compiler }} -pr:h ${{ matrix.profile.compiler }} -s build_type=${{ matrix.build_type }} -s compiler.cppstd=20 -b missing
+    
+    - name: Set reusable strings
+      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
+      id: strings
+      shell: bash
+      run: |
+        BUILD_TYPE=${{ matrix.profile.build_type }}
+        echo "conan-preset=conan-${BUILD_TYPE@L}" >> "$GITHUB_OUTPUT"
+    
+    - name: Configure CMake
+      run: cmake --preset ${{ steps.strings.outputs.conan-preset }}
+
+    - name: Build
+      run: cmake --build --preset ${{ steps.strings.outputs.conan-preset }}
+
+    - name: Test
+      run: ctest --preset ${{ steps.strings.outputs.conan-preset }} --output-on-failure

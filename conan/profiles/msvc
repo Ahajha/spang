@@ -1,0 +1,11 @@
+{% set compiler_version = os.getenv("COMPILER_VERSION") %}
+
+[settings]
+arch=x86_64
+compiler=msvc
+compiler.runtime=dynamic
+compiler.version={{compiler_version}}
+os=Windows
+
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja

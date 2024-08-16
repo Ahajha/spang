@@ -1,0 +1,14 @@
+{% set compiler_version = os.getenv("COMPILER_VERSION") %}
+
+[settings]
+os=Linux
+arch=x86_64
+compiler=gcc
+compiler.version={{compiler_version}}
+compiler.libcxx=libstdc++11
+
+[conf]
+tools.build:compiler_executables={"c": "gcc-{{compiler_version}}", "cpp": "g++-{{compiler_version}}"}
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.system.package_manager:mode=install
+tools.system.package_manager:sudo=True

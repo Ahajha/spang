@@ -46,7 +46,7 @@ jobs:
     
     - name: Install Ninja
       if: ${{ startsWith(matrix.profile.os, 'ubuntu') }}
-      run: apt-get install -y ninja-build
+      run: sudo apt-get install -y ninja-build
     
     - uses: actions/checkout@v3
     

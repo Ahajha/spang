@@ -61,7 +61,7 @@ jobs:
       shell: bash
       run: echo "conan-preset=conan-${BUILD_TYPE@L}" >> "$GITHUB_OUTPUT"
       env:
-        BUILD_TYPE: ${{ matrix.profile.build_type }}
+        BUILD_TYPE: ${{ matrix.build_type }}
     
     - name: Configure CMake
       run: cmake --preset ${{ steps.strings.outputs.conan-preset }}

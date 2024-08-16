@@ -44,6 +44,10 @@ jobs:
     - name: Install Conan
       run: pip install conan
     
+    - name: Install Ninja
+      if: ${{ startsWith(matrix.profile.os, 'ubuntu') }}
+      run: apt-get install -y ninja-build
+    
     - uses: actions/checkout@v3
     
     - name: Install Conan dependencies

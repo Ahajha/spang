@@ -44,6 +44,8 @@ jobs:
     - name: Install Conan
       run: pip install conan
     
+    - uses: actions/checkout@v3
+    
     - name: Install Conan dependencies
       run: conan install . -pr:a ./conan/profiles/${{ matrix.profile.compiler }} -s build_type=${{ matrix.build_type }} -s compiler.cppstd=20 -b missing
       env:

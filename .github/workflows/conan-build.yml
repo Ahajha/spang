@@ -45,9 +45,9 @@ jobs:
       run: pip install conan
     
     - name: Install Conan dependencies
-      run: |
-        COMPILER_VERSION=${{ matrix.profile.compiler_version }}
-        conan install . -pr:b ${{ matrix.profile.compiler }} -pr:h ${{ matrix.profile.compiler }} -s build_type=${{ matrix.build_type }} -s compiler.cppstd=20 -b missing
+      run: conan install . -pr:a ./conan/profiles/${{ matrix.profile.compiler }} -s build_type=${{ matrix.build_type }} -s compiler.cppstd=20 -b missing
+      env:
+        COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
     
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.

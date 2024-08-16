@@ -12,6 +12,3 @@ tools.build:compiler_executables={"c": "clang-{{compiler_version}}", "cpp": "cla
 tools.cmake.cmaketoolchain:generator=Ninja
 tools.system.package_manager:mode=install
 tools.system.package_manager:sudo=True
-
-[tool_requires]
-ninja/1.11.1

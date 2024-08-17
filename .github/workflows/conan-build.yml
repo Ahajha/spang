@@ -42,6 +42,10 @@ jobs:
             arch: armv8
         build_type: ["Release", "Debug"]
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
     - name: Install compiler
       if: ${{ startsWith(matrix.profile.runner, 'ubuntu') }}

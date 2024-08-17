@@ -42,10 +42,6 @@ jobs:
             arch: armv8
         build_type: ["Release", "Debug"]
 
-    defaults:
-      run:
-        shell: bash
-
     steps:
     - name: Install compiler
       if: ${{ startsWith(matrix.profile.runner, 'ubuntu') }}
@@ -81,8 +77,12 @@ jobs:
       env:
         COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
 
-    - name: Test
-      # ,, -> to lowercase
-      run: ctest --preset conan-${BUILD_TYPE,,} --output-on-failure
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: echo "conan-preset=conan-${BUILD_TYPE@L}" >> "$GITHUB_OUTPUT"
       env:
-        BUILD_TYPE: ${{ matrix.build_type }}
+        BUILD_TYPE: ${{ matrix.profile.build_type }}
+
+    - name: Test
+      run: ctest --preset ${{ steps.strings.outputs.conan-preset }} --output-on-failure

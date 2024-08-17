@@ -79,4 +79,5 @@ jobs:
 
     - name: Test
       shell: bash
+      # Lowercase the build type: Release -> release
       run: ctest --preset conan-$(echo ${{ matrix.build_type }} | tr "[:upper:]" "[:lower:]") --output-on-failure

@@ -66,14 +66,14 @@ jobs:
       uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Build
-      run: |
-        conan build . \
-          -pr:a ./conan/profiles/${{ matrix.profile.compiler }} \
-          -s:a os=${{ matrix.profile.os }} \
-          -s:a arch=${{ matrix.profile.arch }} \
-          -s:a build_type=${{ matrix.build_type }} \
-          -s:a compiler.cppstd=20 \
-          -b missing
+      run: >
+        conan build .
+        -pr:a ./conan/profiles/${{ matrix.profile.compiler }}
+        -s:a os=${{ matrix.profile.os }}
+        -s:a arch=${{ matrix.profile.arch }}
+        -s:a build_type=${{ matrix.build_type }}
+        -s:a compiler.cppstd=20
+        -b missing
       env:
         COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
 

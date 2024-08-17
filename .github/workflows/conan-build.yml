@@ -24,7 +24,7 @@ jobs:
             compiler_version: 16
           - os: windows-latest
             compiler: msvc
-            compiler_version: 193
+            compiler_version: 194
         build_type: ["Release", "Debug"]
 
     steps:

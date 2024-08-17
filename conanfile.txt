@@ -4,6 +4,7 @@ catch2/[>=3.5.2 <4]
 [generators]
 CMakeDeps
 CMakeToolchain
+VirtualBuildEnv
 
 [layout]
 cmake_layout

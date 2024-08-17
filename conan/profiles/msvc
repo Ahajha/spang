@@ -8,7 +8,6 @@ compiler.version={{compiler_version}}
 os=Windows
 
 [conf]
-tools.build:compiler_executables={"c": "cl.exe", "cpp": "cl.exe"}
 tools.cmake.cmaketoolchain:generator=Ninja
 
 [tool_requires]

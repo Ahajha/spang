@@ -33,7 +33,7 @@ void input_parser::read(std::istream& stream)
 			if (!(line >> pound && pound == '#' && line >> id))
 				log_error("line ", line_no, ", expected \"t # <id>\"");
 
-			graphs.emplace_back(id);
+			graphs.push_back(parsed_input_graph_t{.id = id});
 			break;
 		}
 		case 'v':
@@ -43,7 +43,7 @@ void input_parser::read(std::istream& stream)
 			if (!(line >> id >> label))
 				log_error("line ", line_no, ", expected \"v <id> <label>\"");
 
-			graphs.back().vertices.emplace_back(id, label);
+			graphs.back().vertices.push_back(parsed_vertex_t{.id = id, .label = label});
 			break;
 		}
 		case 'e':
@@ -56,7 +56,7 @@ void input_parser::read(std::istream& stream)
 			// TODO: Proper error reporting for this
 			assert(graphs.back().vertices.size() > static_cast<std::size_t>(from));
 			assert(graphs.back().vertices.size() > static_cast<std::size_t>(to));
-			graphs.back().edges.emplace_back(from, to, label);
+			graphs.back().edges.push_back(parsed_edge_t{.from = from, .to = to, .label = label});
 			break;
 		}
 		case '#':
@@ -129,7 +129,7 @@ void output_parser::read(std::istream& stream)
 			if (!(line >> id >> label))
 				log_error("line ", line_no, ", expected \"v <id> <label>\"");
 
-			current.vertices.emplace_back(id, label);
+			current.vertices.push_back(parsed_vertex_t{.id = id, .label = label});
 			break;
 		}
 		case 'e':
@@ -139,7 +139,7 @@ void output_parser::read(std::istream& stream)
 			if (!(line >> from >> to >> label))
 				log_error("line ", line_no, ", expected \"e <from_id> <to_id> <label>\"");
 
-			current.edges.emplace_back(from, to, label);
+			current.edges.push_back(parsed_edge_t{.from = from, .to = to, .label = label});
 			break;
 		}
 		case 'x':
@@ -150,7 +150,7 @@ void output_parser::read(std::istream& stream)
 				log_error("line ", line_no, ", expected \"x: <support list>\"");
 
 			while (line >> temp)
-				current.support.emplace_back(temp);
+				current.support.push_back(temp);
 			break;
 		}
 		default:

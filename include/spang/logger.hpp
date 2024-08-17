@@ -23,7 +23,7 @@ template <class... Args> void log_info(Args&&... args)
 	(std::clog << ... << std::forward<Args>(args)) << std::endl;
 }
 
-template <class... Args> void log_error(Args&&... args)
+template <class... Args> [[noreturn]] void log_error(Args&&... args)
 {
 	log_time(std::cerr);
 	std::cerr << "ERROR: ";

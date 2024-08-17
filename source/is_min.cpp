@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <limits>
 #include <optional>
 #include <ranges>
 #include <span>
@@ -92,7 +93,8 @@ std::optional<std::vector<min_dfs_projection_link>> get_instances_of_first_dfs_c
 			// Or maybe use a three way lexicographical comparison with just the labels?
 			if (new_code == min_dfs_code)
 			{
-				min_instances.emplace_back(edge, -1);
+				min_instances.push_back(min_dfs_projection_link{
+					.edge = edge, .prev_link_index = std::numeric_limits<std::size_t>::max()});
 			}
 		}
 	}
@@ -237,7 +239,8 @@ bool is_backwards_min(std::vector<min_dfs_projection_link>& min_instances,
 			assert(new_code.from_label == dfs_code_to_verify.from_label);
 			if (new_code == dfs_code_to_verify)
 			{
-				min_instances.emplace_back(edge_from_last_node, instance_index);
+				min_instances.push_back(min_dfs_projection_link{.edge = edge_from_last_node,
+				                                                .prev_link_index = instance_index});
 			}
 		}
 	}
@@ -304,14 +307,16 @@ bool is_forwards_min(std::vector<min_dfs_projection_link>& min_instances,
 
 				if (new_code == dfs_code_to_verify)
 				{
-					min_instances.emplace_back(edge, instance_index);
+					min_instances.push_back(
+						min_dfs_projection_link{.edge = edge, .prev_link_index = instance_index});
 				}
 			}
 
 			return true;
 		};
 
-		// Check each possible edge from each node on the RMP, starting from the rightmost vertex.
+		// Check each possible edge from each node on the RMP, starting from the rightmost
+		// vertex.
 
 		// This section is the first "iteration" of the loop below.
 		{

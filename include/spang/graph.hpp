@@ -43,8 +43,10 @@ struct graph_t
 		assert(to_id < vertices.size());
 		assert(from_id < vertices.size());
 		const auto edge_id = static_cast<edge_id_t>(n_edges);
-		vertices[to_id].edges.emplace_back(to_id, from_id, edge_label, edge_id);
-		vertices[from_id].edges.emplace_back(from_id, to_id, edge_label, edge_id);
+		vertices[to_id].edges.push_back(
+			edge_t{.from = to_id, .to = from_id, .label = edge_label, .id = edge_id});
+		vertices[from_id].edges.push_back(
+			edge_t{.from = from_id, .to = to_id, .label = edge_label, .id = edge_id});
 		++n_edges;
 	}
 };

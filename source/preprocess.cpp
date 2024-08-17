@@ -75,8 +75,8 @@ struct combined_edge_label
 	// Normalize all edges to be one 'direction', i.e. 3 --4-- 5 and 5 --4-- 3 should be the same
 	// edge.
 	combined_edge_label(vertex_label_t vlabel1, edge_label_t elabel, vertex_label_t vlabel2)
-		: from_label{std::min(vlabel1, vlabel2)}, to_label{std::max(vlabel1, vlabel2)}, edge_label{
-																							elabel}
+		: from_label{std::min(vlabel1, vlabel2)}, to_label{std::max(vlabel1, vlabel2)},
+		  edge_label{elabel}
 	{
 	}
 
@@ -210,8 +210,8 @@ compact_graph_t::compact_graph_t(const parsed_input_graph_t& input,
 }
 
 // TODO:
-[[nodiscard]] auto preprocess(std::vector<parsed_input_graph_t>&& graphs, std::size_t min_freq)
-	-> std::vector<compact_graph_t>
+[[nodiscard]] auto preprocess(std::vector<parsed_input_graph_t>&& graphs,
+                              std::size_t min_freq) -> std::vector<compact_graph_t>
 {
 	const auto frequent_vertex_labels = find_frequent_vertex_labels(graphs, min_freq);
 
@@ -248,7 +248,8 @@ compact_graph_t::compact_graph_t(const parsed_input_graph_t& input,
 
 		if (!frequent_edges.empty())
 		{
-			result.emplace_back(input, frequent_edges, vertex_id_to_n_edges, vertex_id_map);
+			result.push_back(
+				compact_graph_t{input, frequent_edges, vertex_id_to_n_edges, vertex_id_map});
 		}
 
 		input.vertices = {};

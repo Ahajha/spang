@@ -72,7 +72,8 @@ void extend_backwards(const dfs_projection_link& subinstance, const projection_v
 				.edge_label = edge_from_last_node.label,
 				.to_label = rmp_from_node.label,
 			};
-			map[new_code].emplace_back(graph.id, edge_from_last_node, &subinstance);
+			map[new_code].push_back(dfs_projection_link{
+				.graph_id = graph.id, .edge = edge_from_last_node, .prev_link = &subinstance});
 		}
 	}
 }
@@ -111,7 +112,8 @@ void extend_forwards_from_rightmost_vertex(const dfs_projection_link& subinstanc
 			.to_label = to_node.label,
 		};
 
-		map[new_code].emplace_back(graph.id, candidate_edge, &subinstance);
+		map[new_code].push_back(dfs_projection_link{
+			.graph_id = graph.id, .edge = candidate_edge, .prev_link = &subinstance});
 	}
 }
 
@@ -163,7 +165,8 @@ void extend_forwards_from_rightmost_path(const dfs_projection_link& subinstance,
 					.to_label = to_node.label,
 				};
 
-				map[new_code].emplace_back(graph.id, candidate_edge, &subinstance);
+				map[new_code].push_back(dfs_projection_link{
+					.graph_id = graph.id, .edge = candidate_edge, .prev_link = &subinstance});
 			}
 		}
 	}

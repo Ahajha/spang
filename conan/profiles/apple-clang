@@ -6,7 +6,6 @@ compiler.version={{compiler_version}}
 compiler.libcxx=libc++
 
 [conf]
-tools.build:compiler_executables={"c": "clang-{{compiler_version}}", "cpp": "clang++-{{compiler_version}}"}
 tools.cmake.cmaketoolchain:generator=Ninja
 tools.system.package_manager:mode=install
 tools.system.package_manager:sudo=True

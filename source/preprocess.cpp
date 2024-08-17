@@ -145,7 +145,7 @@ compact_graph_t::compact_graph_t(const parsed_input_graph_t& input,
 	  edges{std::make_unique<edge_t[]>(2 * input_edges.size())}
 {
 	vertex_id_to_n_edges.resize(input.vertices.size());
-	std::ranges::fill(vertex_id_to_n_edges, 0);
+	std::ranges::fill(vertex_id_to_n_edges, vertex_id_t(0));
 
 	// 1: Determine # of edges per vertex
 	for (const auto& edge : input_edges)

@@ -1,0 +1,11 @@
+{% set compiler_version = os.getenv("COMPILER_VERSION") %}
+
+[settings]
+compiler=apple-clang
+compiler.version={{compiler_version}}
+compiler.libcxx=libc++
+
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.system.package_manager:mode=install
+tools.system.package_manager:sudo=True

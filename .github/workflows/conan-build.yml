@@ -8,4 +8,80 @@ on:
 
 jobs:
   build:
-    uses: Ahajha/conan-github-workflow/.github/workflows/conan-build.yml@main
+    runs-on: ${{ matrix.profile.runner }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        profile:
+          - runner: ubuntu-22.04
+            compiler: gcc
+            compiler_version: 10
+            os: Linux
+            arch: x86_64
+          - runner: ubuntu-22.04
+            compiler: clang
+            compiler_version: 16
+            os: Linux
+            arch: x86_64
+          - runner: windows-2022
+            compiler: msvc
+            compiler_version: 194
+            os: Windows
+            arch: x86_64
+          - runner: macos-13
+            compiler: apple-clang
+            compiler_version: 15
+            os: Macos
+            arch: x86_64
+          - runner: macos-14
+            compiler: apple-clang
+            compiler_version: 15
+            os: Macos
+            arch: armv8
+        build_type: ["Release", "Debug"]
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Install compiler
+      if: ${{ startsWith(matrix.profile.runner, 'ubuntu') }}
+      run: |
+        if [ ${{ matrix.profile.compiler }} == "clang" ]
+        then
+            wget https://apt.llvm.org/llvm.sh
+            chmod +x llvm.sh
+            sudo ./llvm.sh ${{ matrix.profile.compiler_version }}
+            rm llvm.sh
+        else
+            sudo apt install g++-${{ matrix.profile.compiler_version }} -y
+        fi
+
+    - name: Install Conan
+      run: pip install conan
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Build
+      run: >
+        conan build .
+        -pr:a ./conan/profiles/${{ matrix.profile.compiler }}
+        -s:a os=${{ matrix.profile.os }}
+        -s:a arch=${{ matrix.profile.arch }}
+        -s:a build_type=${{ matrix.build_type }}
+        -s:a compiler.cppstd=20
+        -b missing
+      env:
+        COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
+
+    - name: Test
+      run: ctest --preset conan-${BUILD_TYPE@L} --output-on-failure
+      env:
+        BUILD_TYPE: ${{ matrix.build_type }}

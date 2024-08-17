@@ -69,10 +69,10 @@ jobs:
       run: |
         conan build . \
           -pr:a ./conan/profiles/${{ matrix.profile.compiler }} \
-          -s os=${{ matrix.profile.os }} \
-          -s arch=${{ matrix.profile.arch }} \
-          -s build_type=${{ matrix.build_type }} \
-          -s compiler.cppstd=20 \
+          -s:a os=${{ matrix.profile.os }} \
+          -s:a arch=${{ matrix.profile.arch }} \
+          -s:a build_type=${{ matrix.build_type }} \
+          -s:a compiler.cppstd=20 \
           -b missing
       env:
         COMPILER_VERSION: ${{ matrix.profile.compiler_version }}

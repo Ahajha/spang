@@ -3,7 +3,7 @@
 [settings]
 compiler=apple-clang
 compiler.version={{compiler_version}}
-compiler.libcxx=libc++11
+compiler.libcxx=libc++
 
 [conf]
 tools.build:compiler_executables={"c": "clang-{{compiler_version}}", "cpp": "clang++-{{compiler_version}}"}

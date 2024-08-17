@@ -44,7 +44,7 @@ jobs:
 
     steps:
     - name: Install compiler
-      if: ${{ startsWith(matrix.profile.os, 'ubuntu') }}
+      if: ${{ startsWith(matrix.profile.runner, 'ubuntu') }}
       run: |
         if [ ${{ matrix.profile.compiler }} == "clang" ]
         then

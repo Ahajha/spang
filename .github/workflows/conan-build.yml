@@ -43,15 +43,18 @@ jobs:
 
     - name: Install Conan
       run: pip install conan
-    
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
     - name: Install Ninja
-      if: ${{ startsWith(matrix.profile.os, 'ubuntu') }}
-      run: sudo apt-get install -y ninja-build
+      uses: seanmiddleditch/gha-setup-ninja@master
+
     - name: Build
       run: conan build . -pr:a ./conan/profiles/${{ matrix.profile.compiler }} -s build_type=${{ matrix.build_type }} -s compiler.cppstd=20 -b missing
       env:
         COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
-    
+
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings

@@ -9,6 +9,3 @@ os=Windows
 
 [conf]
 tools.cmake.cmaketoolchain:generator=Ninja
-
-[tool_requires]
-ninja/1.11.1

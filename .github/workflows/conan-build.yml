@@ -82,6 +82,7 @@ jobs:
         COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
 
     - name: Test
-      run: ctest --preset conan-${BUILD_TYPE@L} --output-on-failure
+      # ,, -> to lowercase
+      run: ctest --preset conan-${BUILD_TYPE,,} --output-on-failure
       env:
         BUILD_TYPE: ${{ matrix.build_type }}

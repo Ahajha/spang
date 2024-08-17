@@ -30,11 +30,6 @@ jobs:
             compiler_version: 194
             os: Windows
             arch: x86_64
-          - runner: macos-13
-            compiler: apple-clang
-            compiler_version: 15
-            os: Macos
-            arch: x86_64
           - runner: macos-14
             compiler: apple-clang
             compiler_version: 15

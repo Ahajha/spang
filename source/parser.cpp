@@ -33,7 +33,7 @@ void input_parser::read(std::istream& stream)
 			if (!(line >> pound && pound == '#' && line >> id))
 				log_error("line ", line_no, ", expected \"t # <id>\"");
 
-			graphs.push_back(parsed_input_graph_t{.id = id});
+			graphs.push_back(parsed_input_graph_t{.id = id, .vertices = {}, .edges = {}});
 			break;
 		}
 		case 'v':

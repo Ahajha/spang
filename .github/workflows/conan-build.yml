@@ -30,21 +30,12 @@ jobs:
             compiler_version: 194
             os: Windows
             arch: x86_64
-          - runner: macos-13
-            compiler: apple-clang
-            compiler_version: 15
-            os: Macos
-            arch: x86_64
           - runner: macos-14
             compiler: apple-clang
             compiler_version: 15
             os: Macos
             arch: armv8
         build_type: ["Release", "Debug"]
-
-    defaults:
-      run:
-        shell: bash
 
     steps:
     - name: Install compiler
@@ -82,6 +73,6 @@ jobs:
         COMPILER_VERSION: ${{ matrix.profile.compiler_version }}
 
     - name: Test
-      run: ctest --preset conan-${BUILD_TYPE@L} --output-on-failure
-      env:
-        BUILD_TYPE: ${{ matrix.build_type }}
+      shell: bash
+      # Lowercase the build type: Release -> release
+      run: ctest --preset conan-$(echo ${{ matrix.build_type }} | tr "[:upper:]" "[:lower:]") --output-on-failure

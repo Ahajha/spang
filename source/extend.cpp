@@ -187,7 +187,7 @@ extension_map extend(const std::span<const compact_graph_t> graphs,
 	for (const auto& subinstance : subinstances)
 	{
 		const auto& graph = graphs[static_cast<std::size_t>(subinstance.graph_id)];
-		// instance_view.build_view(subinstance, graph); // TODO
+		instance_view.build_view(subinstance, graph);
 
 		extend_backwards(subinstance, instance_view, graph, dfs_code_list, rightmost_path, map);
 

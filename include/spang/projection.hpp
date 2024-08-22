@@ -1,6 +1,7 @@
 #pragma once
 
 #include <spang/graph.hpp>
+#include <spang/preprocess.hpp>
 
 #include <limits>
 #include <memory>
@@ -60,7 +61,7 @@ class projection_view
 	/*!
 	Builds a view of a dfs_projection.
 	*/
-	void build_view();
+	void build_view(const dfs_projection_link& start, const compact_graph_t& graph);
 
 	/*!
 	Builds a view of a min_dfs_projection. Does not set information on
@@ -79,7 +80,7 @@ class projection_view
 	                                     const std::size_t projection_start_index);
 
 	bool has_edge(const edge_id_t id) const { return has_edge_[id]; }
-	bool has_vertex(const vertex_id_t id) const { return has_vertex_[id]; }
+	bool has_vertex(const vertex_id_t id) const { return vertex_refcounts[id] != 0; }
 
 	//! Gets the nth edge added to the graph.
 	//! Indexes correspond to the corresponding DFS code list, so get_edge(i) is
@@ -92,9 +93,21 @@ class projection_view
 
   private:
 	std::unique_ptr<bool[]> has_edge_;
-	std::unique_ptr<bool[]> has_vertex_;
+	// For non-min views, we use refcounts for the optimized algorithm. We cannot use booleans with
+	// toggles, since any vertex that is referenced twice would count as unreferenced. We could
+	// potentially use that approach if we could distinguish forwards edges, but I don't know if
+	// that's possible with the information given. This is effectively a boolean for min views,
+	// Maybe another reason to split this class in two, though we may also want to try that approach
+	// for those.
+	std::unique_ptr<vertex_id_t[]> vertex_refcounts;
 	std::unique_ptr<const edge_t*[]> contained_edges;
-	std::size_t n_contained_edges;
+	std::size_t n_contained_edges{0};
+
+	// Only used for non-min views
+	// Todo: Should min projection view be a separate class? Current implementation doesn't require
+	// vertex refcounts (just bools), but it may be updated to use the more optimal algorithm.
+	const compact_graph_t* contained_graph{nullptr};
+	const dfs_projection_link* contained_link{nullptr};
 
 	template <bool include_edge_info, bool include_vertex_info>
 	void build_min_view(const graph_t& min_graph,

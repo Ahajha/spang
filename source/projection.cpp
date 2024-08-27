@@ -18,7 +18,7 @@ void projection_view::build_view(const dfs_projection_link& start, const compact
 	{
 		// New graph, start from scratch
 		std::fill_n(has_edge_.get(), graph.n_edges, false);
-		std::fill_n(vertex_refcounts.get(), graph.vertices.size(), 0);
+		std::fill_n(vertex_refcounts.get(), graph.vertices.size(), static_cast<vertex_id_t>(0));
 		n_contained_edges = 0;
 
 		auto* current_link = &start;
@@ -87,7 +87,8 @@ void projection_view::build_min_view(const graph_t& min_graph,
 	}
 	if constexpr (include_has_vertex_info)
 	{
-		std::fill_n(this->vertex_refcounts.get(), min_graph.vertices.size(), false);
+		std::fill_n(this->vertex_refcounts.get(), min_graph.vertices.size(),
+		            static_cast<vertex_id_t>(0));
 	}
 
 	auto projection_index = projection_start_index;

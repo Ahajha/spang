@@ -7,6 +7,7 @@
 using spang::dfs_edge_t;
 using spang::is_min;
 
+// Todo: Test rightmost paths and min graphs returned.
 TEST_CASE("is_min")
 {
 	// clang-format off

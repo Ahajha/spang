@@ -381,7 +381,8 @@ void update_rightmost_path(std::vector<edge_id_t>& rightmost_path,
 
 } // namespace
 
-bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
+auto is_min(const std::span<const dfs_edge_t> dfs_code_list)
+	-> std::optional<std::pair<std::vector<edge_id_t>, graph_t>>
 {
 	assert(!dfs_code_list.empty());
 	assert(dfs_code_list[0].from == 0);
@@ -389,18 +390,18 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 	assert(dfs_code_list[0].from_label <= dfs_code_list[0].to_label);
 
 	std::vector<edge_id_t> rightmost_path{0};
-	const auto min_graph = build_min_graph(dfs_code_list);
+	auto min_graph = build_min_graph(dfs_code_list);
 
 	if (dfs_code_list.size() == 1)
 	{
-		return true;
+		return {{std::move(rightmost_path), std::move(min_graph)}};
 	}
 
 	auto min_instances = get_instances_of_first_dfs_code(dfs_code_list[0], min_graph);
 
 	if (!min_instances.has_value())
 	{
-		return false;
+		return {};
 	}
 
 	std::size_t instance_start_index = 0;
@@ -416,7 +417,7 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 			if (!is_backwards_min(*min_instances, instance_start_index, instance_end_index,
 			                      instance_view, min_graph, rightmost_path, sublist))
 			{
-				return false;
+				return {};
 			}
 		}
 		else
@@ -426,7 +427,7 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 			    !is_forwards_min(*min_instances, instance_start_index, instance_end_index,
 			                     instance_view, min_graph, rightmost_path, sublist))
 			{
-				return false;
+				return {};
 			}
 
 			update_rightmost_path(rightmost_path, sublist);
@@ -435,7 +436,7 @@ bool is_min(const std::span<const dfs_edge_t> dfs_code_list)
 		instance_start_index = instance_end_index;
 	}
 
-	return true;
+	return {{std::move(rightmost_path), std::move(min_graph)}};
 }
 
 } // namespace spang

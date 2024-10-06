@@ -2,8 +2,8 @@
 #include <spang/projection.hpp>
 
 #include <algorithm>
-#include <cstdint>
 #include <ranges>
+#include <span>
 
 namespace spang
 {

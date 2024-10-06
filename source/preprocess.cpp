@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include <limits>
-#include <set>
+#include <set> // IWYU pragma: keep (std::set, incorrect lint)
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -210,8 +210,8 @@ compact_graph_t::compact_graph_t(const parsed_input_graph_t& input,
 }
 
 // TODO:
-[[nodiscard]] auto preprocess(std::vector<parsed_input_graph_t>&& graphs,
-                              std::size_t min_freq) -> std::vector<compact_graph_t>
+[[nodiscard]] auto preprocess(std::vector<parsed_input_graph_t>&& graphs, std::size_t min_freq)
+	-> std::vector<compact_graph_t>
 {
 	const auto frequent_vertex_labels = find_frequent_vertex_labels(graphs, min_freq);
 

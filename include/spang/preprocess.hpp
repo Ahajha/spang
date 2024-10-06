@@ -3,10 +3,8 @@
 #include <spang/graph.hpp>
 #include <spang/parser.hpp>
 
-#include <map>
 #include <memory>
 #include <span>
-#include <utility>
 #include <vector>
 
 namespace spang

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cstdint>
-// For std::hash
-#include <memory>
+#include <memory> // IWYU pragma: keep (std::hash)
 
 namespace spang
 {

@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <array>
 #include <fstream>
-#include <ranges>
 
 using spang::edge_t;
 using spang::input_parser;

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <map>
 #include <set> // IWYU pragma: keep (std::set, incorrect lint)
 #include <unordered_map>
 #include <unordered_set>

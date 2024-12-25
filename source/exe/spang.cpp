@@ -10,7 +10,7 @@ struct CLI
 	const char* file = "";
 	std::size_t min_freq;
 };
-CLI151_CLI(CLI, &T::file, &T::min_freq);
+CLI151_CLI(CLI, &T::file, &T::min_freq)
 
 int main(int argc, char* argv[])
 {

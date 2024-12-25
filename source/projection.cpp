@@ -29,7 +29,8 @@ void projection_view::build_view(const dfs_projection_link& start, const compact
 			++vertex_refcounts[current_link->edge.from];
 			++vertex_refcounts[current_link->edge.to];
 			current_link = current_link->prev_link;
-		} while (current_link != nullptr);
+		}
+		while (current_link != nullptr);
 
 		contained_graph = &graph;
 	}
@@ -65,7 +66,8 @@ void projection_view::build_view(const dfs_projection_link& start, const compact
 			old_link = old_link->prev_link;
 
 			assert((new_link == nullptr) == (old_link == nullptr));
-		} while (new_link != old_link);
+		}
+		while (new_link != old_link);
 	}
 	contained_link = &start;
 }

@@ -16,14 +16,16 @@ inline void log_time(std::ostream& stream)
 	stream << buf;
 }
 
-template <class... Args> void log_info(Args&&... args)
+template <class... Args>
+void log_info(Args&&... args)
 {
 	log_time(std::clog);
 	std::clog << "INFO: ";
 	(std::clog << ... << std::forward<Args>(args)) << std::endl;
 }
 
-template <class... Args> [[noreturn]] void log_error(Args&&... args)
+template <class... Args>
+[[noreturn]] void log_error(Args&&... args)
 {
 	log_time(std::cerr);
 	std::cerr << "ERROR: ";

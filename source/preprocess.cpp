@@ -76,8 +76,8 @@ struct combined_edge_label
 	// Normalize all edges to be one 'direction', i.e. 3 --4-- 5 and 5 --4-- 3 should be the same
 	// edge.
 	combined_edge_label(vertex_label_t vlabel1, edge_label_t elabel, vertex_label_t vlabel2)
-		: from_label{std::min(vlabel1, vlabel2)}, to_label{std::max(vlabel1, vlabel2)},
-		  edge_label{elabel}
+		: from_label{std::min(vlabel1, vlabel2)}, to_label{std::max(vlabel1, vlabel2)}, edge_label{
+																							elabel}
 	{
 	}
 

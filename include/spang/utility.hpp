@@ -34,7 +34,8 @@ template <class T, class... Ts>
 }
 
 // Based on boost::hash_combine
-template <typename T> void hash_combine(std::size_t& seed, T value)
+template <typename T>
+void hash_combine(std::size_t& seed, T value)
 {
 	seed ^= std::hash<T>{}(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }

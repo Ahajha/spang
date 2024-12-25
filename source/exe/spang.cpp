@@ -14,8 +14,7 @@ CLI151_CLI(CLI, &T::file, &T::min_freq)
 
 int main(int argc, char* argv[])
 {
-	// TODO: Fix const (in cli151)
-	auto options = cli151::parse<CLI>(argc, argv);
+	const auto options = cli151::parse<CLI>(argc, argv);
 
 	if (!options)
 	{

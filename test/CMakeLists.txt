@@ -7,7 +7,7 @@ target_sources(unit_tests PRIVATE
     source/test_parse.cpp
     source/test_preprocess.cpp
 )
-target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain spang)
+target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain libspang)
 
 add_test(
     NAME unit_tests

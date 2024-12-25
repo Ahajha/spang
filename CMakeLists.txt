@@ -11,10 +11,10 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Wconversion -Werror)
 endif()
 
-add_library(spang STATIC)
-target_compile_features(spang PUBLIC cxx_std_20)
-target_include_directories(spang PUBLIC include)
-target_sources(spang
+add_library(libspang STATIC)
+target_compile_features(libspang PUBLIC cxx_std_20)
+target_include_directories(libspang PUBLIC include)
+target_sources(libspang
 PUBLIC
     include/spang/dfs.hpp
     include/spang/extend.hpp
@@ -28,13 +28,28 @@ PUBLIC
 PRIVATE
     source/extend.cpp
     source/is_min.cpp
+    source/mine.cpp
     source/parser.cpp
     source/preprocess.cpp
     source/projection.cpp
+    source/report.cpp
 )
+
+# Use from FetchContent until this is added to Conan
+include(FetchContent)
+FetchContent_Declare(
+    cli151
+    GIT_REPOSITORY https://github.com/Ahajha/cli151.git
+    GIT_TAG        528ce70898eae94f3181b20f95974b4bc2072102
+)
+FetchContent_MakeAvailable(cli151)
 
 add_executable(validate)
 target_sources(validate PRIVATE source/exe/validate.cpp)
-target_link_libraries(validate PRIVATE spang)
+target_link_libraries(validate PRIVATE libspang)
+
+add_executable(spang)
+target_sources(spang PRIVATE source/exe/spang.cpp)
+target_link_libraries(spang PRIVATE libspang cli151)
 
 add_subdirectory(test)

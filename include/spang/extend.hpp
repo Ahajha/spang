@@ -37,6 +37,6 @@ Find extensions of a dfs code sequence within a given database.
 extension_map extend(const std::span<const compact_graph_t> graphs,
                      const std::span<const dfs_edge_t> dfs_code_list,
                      const std::span<const dfs_projection_link> subinstances,
-                     const std::span<const dfs_edge_t> rightmost_path);
+                     const std::span<const edge_id_t> rightmost_path);
 
 } // namespace spang

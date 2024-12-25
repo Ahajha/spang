@@ -1,0 +1,30 @@
+#include <cli151/cli151.hpp>
+#include <cli151/formatters/error/format.hpp>
+#include <cli151/macros.hpp>
+
+#include <iostream>
+
+struct CLI
+{
+	// TODO: cli151 should check that these are required
+	const char* file = "";
+	std::size_t min_freq;
+};
+CLI151_CLI(CLI, &T::file, &T::min_freq);
+
+int main(int argc, char* argv[])
+{
+	// TODO: Fix const (in cli151)
+	auto options = cli151::parse<CLI>(argc, argv);
+
+	if (!options)
+	{
+		cli151::compat::println("{}", options.error().formatter<CLI>(argc, argv));
+		return 1;
+	}
+
+	const auto [file, min_freq] = *options;
+
+	std::cout << "File: " << file << '\n';
+	std::cout << "Min frequency: " << min_freq << '\n';
+}

@@ -1,0 +1,43 @@
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
+cc_library(
+    name = "spang-lib",
+    srcs = glob(
+        ["source/**"],
+        exclude = ["source/exe/**"],
+    ),
+    hdrs = glob(["include/spang/**"]),
+    includes = ["include"],
+)
+
+cc_binary(
+    name = "spang",
+    srcs = ["source/exe/spang.cpp"],
+    deps = [
+        ":spang-lib",
+        "@cli151",
+    ],
+)
+
+cc_binary(
+    name = "validate",
+    srcs = ["source/exe/validate.cpp"],
+    deps = [
+        ":spang-lib",
+    ],
+)
+
+cc_test(
+    name = "tests",
+    srcs = glob(["test/source/*.cpp"]),
+    data = glob(["test/data/**"]),
+    local_defines = [
+        "DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS=1",
+    ],
+    deps = [
+        ":spang-lib",
+        "@catch2//:catch2_main",
+    ],
+)

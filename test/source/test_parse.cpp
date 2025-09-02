@@ -13,7 +13,7 @@ TEST_CASE("parse input")
 
 	input_parser parser;
 	{
-		std::ifstream infile("data/Chemical_340.txt");
+		std::ifstream infile("test/data/Chemical_340.txt");
 
 		parser.read(infile);
 	}

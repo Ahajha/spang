@@ -12,5 +12,5 @@ target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain libspang)
 add_test(
     NAME unit_tests
     COMMAND unit_tests
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
 )

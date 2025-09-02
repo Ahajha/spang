@@ -1,0 +1,20 @@
+"""Spang"""
+
+bazel_dep(name = "catch2", version = "3.10.0", dev_dependency = True)
+bazel_dep(name = "cli151")
+bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
+bazel_dep(name = "rules_cc", version = "0.2.2")
+
+# Refresh compile commands with
+# bazelisk run @hedron_compile_commands//:refresh_all
+git_override(
+    module_name = "hedron_compile_commands",
+    remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
+    commit = "abb61a688167623088f8768cc9264798df6a9d10",
+)
+
+git_override(
+    module_name = "cli151",
+    remote = "https://github.com/Ahajha/cli151.git",
+    commit = "a84661204eb852b236d562ef1b22e8894aae9a86",
+)

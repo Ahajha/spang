@@ -46,7 +46,7 @@ TEST_CASE("preprocess input")
 {
 	input_parser parser;
 	{
-		std::ifstream infile("data/data1.txt");
+		std::ifstream infile("test/data/data1.txt");
 
 		parser.read(infile);
 	}

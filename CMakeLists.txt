@@ -40,7 +40,7 @@ include(FetchContent)
 FetchContent_Declare(
     cli151
     GIT_REPOSITORY https://github.com/Ahajha/cli151.git
-    GIT_TAG        66c37888b403c2f3434ca7e96248d2f4f74213d6
+    GIT_TAG        a84661204eb852b236d562ef1b22e8894aae9a86
 )
 FetchContent_MakeAvailable(cli151)
 

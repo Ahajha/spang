@@ -1,5 +1,4 @@
 #include <cli151/cli151.hpp>
-#include <cli151/formatters/error/format.hpp>
 #include <cli151/macros.hpp>
 
 #include <iostream>
@@ -18,7 +17,6 @@ int main(int argc, char* argv[])
 
 	if (!options)
 	{
-		cli151::compat::println("{}", options.error().formatter<CLI>(argc, argv));
 		return 1;
 	}
 

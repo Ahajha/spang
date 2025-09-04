@@ -33,9 +33,6 @@ cc_test(
     name = "tests",
     srcs = glob(["test/source/*.cpp"]),
     data = glob(["test/data/**"]),
-    local_defines = [
-        "DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS=1",
-    ],
     deps = [
         ":spang-lib",
         "@catch2//:catch2_main",

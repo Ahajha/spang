@@ -22,7 +22,8 @@ auto count_support(const std::span<const dfs_projection_link>& links) -> std::si
 	graph_id_t prev_id = links.front().graph_id;
 	std::size_t support = 0;
 
-	for (const auto& link : links | std::views::drop(1))
+	const auto view = links | std::views::drop(1);
+	for (const auto& link : view)
 	{
 		if (prev_id != link.graph_id)
 		{

@@ -15,4 +15,4 @@ conaninfo.txt
 graph_info.json
 
 # Bazel output folders
-bazel-*/
+bazel-*

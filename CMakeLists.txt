@@ -3,6 +3,15 @@ project(spang LANGUAGES CXX)
 
 include(CTest)
 
+# Use from FetchContent until this is added to Conan
+include(FetchContent)
+FetchContent_Declare(
+    cli151
+    GIT_REPOSITORY https://github.com/Ahajha/cli151.git
+    GIT_TAG        a84661204eb852b236d562ef1b22e8894aae9a86
+)
+FetchContent_MakeAvailable(cli151)
+
 if (MSVC)
     add_compile_options(/W4 /WX)
     # Use of std::localtime gives a warning - maybe can revisit in the future
@@ -34,15 +43,6 @@ PRIVATE
     source/projection.cpp
     source/report.cpp
 )
-
-# Use from FetchContent until this is added to Conan
-include(FetchContent)
-FetchContent_Declare(
-    cli151
-    GIT_REPOSITORY https://github.com/Ahajha/cli151.git
-    GIT_TAG        a84661204eb852b236d562ef1b22e8894aae9a86
-)
-FetchContent_MakeAvailable(cli151)
 
 add_executable(validate)
 target_sources(validate PRIVATE source/exe/validate.cpp)
